@@ -40,4 +40,13 @@ const resources = [
     notes: "Basic9-Computing-Week1-Lesson-Notes.pdf"
   }
 
+  {
+    class: "Basic 8",
+    subject: "Mathematics",
+    term: "First Term",
+    week: "Week 3",
+    topic: "TEST RESOURCE — Comparing and Rounding",
+    plan: "Basic7_Comparing_Rounding_Lesson_Plan-1.docx",
+    notes: "Basic_8_Week_3_Lesson_Notes.docx"
+  },
 ];
