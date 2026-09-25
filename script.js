@@ -1,1460 +1,1117 @@
 /* =========================================================
    TEACHER RESOURCE HUB
-   Premium Purple Educational Design
+   Navigation Engine
+   Class → Subject → Term → Week → Downloads
    ========================================================= */
 
-:root {
-  --purple-900: #2e1065;
-  --purple-800: #4c1d95;
-  --purple-700: #5b21b6;
-  --purple-600: #6d28d9;
-  --purple-500: #7c3aed;
-  --purple-400: #8b5cf6;
-  --purple-300: #a78bfa;
-  --purple-100: #ede9fe;
+const classGrid = document.getElementById("classGrid");
+const libraryView = document.getElementById("libraryView");
+const breadcrumb = document.getElementById("breadcrumb");
 
-  --ink: #181329;
-  --muted: #706b80;
-  --soft: #f8f7fc;
-  --white: #ffffff;
-  --border: rgba(76, 29, 149, 0.11);
+const searchInput = document.getElementById("searchInput");
+const clearSearch = document.getElementById("clearSearch");
 
-  --shadow-sm: 0 8px 25px rgba(38, 16, 84, 0.07);
-  --shadow-lg: 0 25px 70px rgba(38, 16, 84, 0.13);
+const menuButton = document.getElementById("menuButton");
+const mainNav = document.getElementById("mainNav");
 
-  --radius-sm: 14px;
-  --radius-md: 22px;
-  --radius-lg: 32px;
-
-  --max-width: 1180px;
-}
+const yearElement = document.getElementById("year");
 
 
-/* ================= RESET ================= */
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+const JHS_SUBJECTS = [
+  "Mathematics",
+  "Computing",
+  "English",
+  "Science",
+  "Social Studies"
+];
 
-html {
-  scroll-behavior: smooth;
-}
+const PRIMARY_SUBJECTS = [
+  "Mathematics",
+  "English",
+  "Science",
+  "Social Studies"
+];
 
-body {
-  font-family: "DM Sans", sans-serif;
-  color: var(--ink);
-  background: var(--white);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+const TERMS = [
+  "First Term",
+  "Second Term",
+  "Third Term"
+];
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-
-/* ================= CONTAINER ================= */
-
-.container {
-  width: min(var(--max-width), calc(100% - 40px));
-  margin-inline: auto;
-}
+const CLASSES = [
+  "Basic 1",
+  "Basic 2",
+  "Basic 3",
+  "Basic 4",
+  "Basic 5",
+  "Basic 6",
+  "Basic 7",
+  "Basic 8",
+  "Basic 9"
+];
 
 
-/* ================= HEADER ================= */
+/* =========================================================
+   NAVIGATION STATE
+   ========================================================= */
 
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-
-  border-bottom: 1px solid rgba(76, 29, 149, 0.08);
-}
-
-.header-inner {
-  min-height: 78px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 30px;
-}
-
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 11px;
-}
-
-.brand-mark {
-  width: 43px;
-  height: 43px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 13px;
-
-  color: white;
-  font-size: 14px;
-  font-weight: 800;
-
-  background:
-    linear-gradient(135deg, var(--purple-600), var(--purple-900));
-
-  box-shadow:
-    0 8px 22px rgba(109, 40, 217, 0.28);
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
-
-  line-height: 1.05;
-}
-
-.brand-text strong {
-  font-size: 16px;
-  font-weight: 800;
-}
-
-.brand-text span {
-  color: var(--purple-600);
-  font-size: 13px;
-  font-weight: 600;
-}
-
-#mainNav {
-  display: flex;
-  align-items: center;
-  gap: 34px;
-}
-
-#mainNav a {
-  position: relative;
-
-  color: #514b60;
-  font-size: 14px;
-  font-weight: 600;
-
-  transition: 0.25s ease;
-}
-
-#mainNav a:hover {
-  color: var(--purple-600);
-}
-
-#mainNav a::after {
-  content: "";
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -7px;
-
-  height: 2px;
-
-  background: var(--purple-600);
-
-  transform: scaleX(0);
-  transform-origin: center;
-
-  transition: 0.25s ease;
-}
-
-#mainNav a:hover::after {
-  transform: scaleX(1);
-}
-
-.menu-button {
-  display: none;
-
-  width: 43px;
-  height: 43px;
-
-  border: 0;
-  border-radius: 12px;
-
-  color: var(--purple-800);
-  background: var(--purple-100);
-
-  font-size: 21px;
-}
+let currentClass = null;
+let currentSubject = null;
+let currentTerm = null;
 
 
-/* ================= HERO ================= */
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-.hero {
-  position: relative;
-  min-height: 610px;
+function getSubjectsForClass(className) {
 
-  display: flex;
-  align-items: center;
-
-  overflow: hidden;
-
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(139, 92, 246, 0.22),
-      transparent 30%
-    ),
-    radial-gradient(
-      circle at 85% 60%,
-      rgba(124, 58, 237, 0.20),
-      transparent 30%
-    ),
-    linear-gradient(
-      135deg,
-      #160b2f 0%,
-      #291052 45%,
-      #4c1d95 100%
-    );
-
-  color: white;
-}
-
-.hero::before {
-  content: "";
-
-  position: absolute;
-  inset: 0;
-
-  opacity: 0.18;
-
-  background-image:
-    radial-gradient(
-      rgba(255,255,255,0.8) 1px,
-      transparent 1px
-    );
-
-  background-size: 35px 35px;
-
-  mask-image: linear-gradient(
-    to right,
-    black,
-    transparent 80%
+  const classNumber = Number(
+    className.replace("Basic ", "")
   );
+
+  return classNumber >= 7
+    ? JHS_SUBJECTS
+    : PRIMARY_SUBJECTS;
 }
 
-.hero-glow {
-  position: absolute;
 
-  border-radius: 50%;
-  filter: blur(2px);
+function getClassNumber(className) {
 
-  pointer-events: none;
+  return Number(
+    className.replace("Basic ", "")
+  );
+
 }
 
-.hero-glow-one {
-  width: 350px;
-  height: 350px;
 
-  right: -100px;
-  top: -100px;
+function resourceExistsForClass(className) {
 
-  background: rgba(167, 139, 250, 0.18);
+  return resources.some(
+    item => item.class === className
+  );
+
 }
 
-.hero-glow-two {
-  width: 240px;
-  height: 240px;
 
-  left: 35%;
-  bottom: -150px;
+function getSubjectResources(className, subject) {
 
-  background: rgba(255, 255, 255, 0.08);
+  return resources.filter(
+    item =>
+      item.class === className &&
+      item.subject === subject
+  );
+
 }
 
-.hero-inner {
-  position: relative;
-  z-index: 2;
 
-  min-height: 610px;
+function getTermResources(className, subject, term) {
 
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: 60px;
+  return resources.filter(
+    item =>
+      item.class === className &&
+      item.subject === subject &&
+      item.term === term
+  );
+
 }
 
-.hero-copy {
-  max-width: 650px;
+
+function getAvailableSubjects(className) {
+
+  const allowedSubjects =
+    getSubjectsForClass(className);
+
+  return allowedSubjects.filter(subject =>
+    resources.some(
+      item =>
+        item.class === className &&
+        item.subject === subject
+    )
+  );
+
 }
 
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
 
-  margin-bottom: 22px;
+function getAvailableTerms(className, subject) {
 
-  color: #ddd0ff;
+  return TERMS.filter(term =>
+    resources.some(
+      item =>
+        item.class === className &&
+        item.subject === subject &&
+        item.term === term
+    )
+  );
 
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
 }
 
-.eyebrow-dot {
-  width: 7px;
-  height: 7px;
 
-  border-radius: 50%;
+function scrollToLibrary() {
 
-  background: #c4b5fd;
-  box-shadow: 0 0 15px #c4b5fd;
+  document.querySelector(".library-section")
+    .scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+
 }
 
-.hero h1 {
-  max-width: 680px;
 
-  margin-bottom: 23px;
+/* =========================================================
+   BREADCRUMBS
+   ========================================================= */
 
-  font-family: "Playfair Display", serif;
-  font-size: clamp(45px, 6vw, 76px);
-  line-height: 0.98;
-  letter-spacing: -0.04em;
+function renderBreadcrumb() {
+
+  if (!currentClass) {
+
+    breadcrumb.innerHTML = "";
+
+    return;
+
+  }
+
+
+  let html = `
+    <button data-level="classes">
+      Classes
+    </button>
+  `;
+
+
+  if (currentClass) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <button data-level="subjects">
+        ${currentClass}
+      </button>
+    `;
+
+  }
+
+
+  if (currentSubject) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <button data-level="terms">
+        ${currentSubject}
+      </button>
+    `;
+
+  }
+
+
+  if (currentTerm) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <span>${currentTerm}</span>
+    `;
+
+  }
+
+
+  breadcrumb.innerHTML = html;
+
+
+  breadcrumb
+    .querySelectorAll("button")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const level =
+          button.dataset.level;
+
+        if (level === "classes") {
+
+          currentClass = null;
+          currentSubject = null;
+          currentTerm = null;
+
+          renderClasses();
+
+          document
+            .querySelector("#classes")
+            .scrollIntoView({
+              behavior: "smooth"
+            });
+
+        }
+
+
+        if (level === "subjects") {
+
+          currentSubject = null;
+          currentTerm = null;
+
+          renderSubjects();
+
+          scrollToLibrary();
+
+        }
+
+
+        if (level === "terms") {
+
+          currentTerm = null;
+
+          renderTerms();
+
+          scrollToLibrary();
+
+        }
+
+      });
+
+    });
+
 }
 
-.hero h1 span {
-  display: block;
 
-  background:
-    linear-gradient(
-      90deg,
-      #ffffff,
-      #c4b5fd
+/* =========================================================
+   CLASS VIEW
+   ========================================================= */
+
+function renderClasses() {
+
+  classGrid.innerHTML = "";
+
+  CLASSES.forEach((className, index) => {
+
+    const available =
+      resourceExistsForClass(className);
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "class-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.04}s`;
+
+    card.innerHTML = `
+
+      <span class="class-number">
+        ${getClassNumber(className)}
+      </span>
+
+      <span class="class-arrow">→</span>
+
+      <h3>${className}</h3>
+
+      <p>
+        ${available
+          ? "Explore available teaching resources"
+          : "Resources coming soon"
+        }
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentClass = className;
+      currentSubject = null;
+      currentTerm = null;
+
+      renderSubjects();
+
+      scrollToLibrary();
+
+    });
+
+
+    classGrid.appendChild(card);
+
+  });
+
+
+  libraryView.innerHTML = "";
+
+  renderBreadcrumb();
+
+}
+
+
+/* =========================================================
+   SUBJECT VIEW
+   ========================================================= */
+
+function renderSubjects() {
+
+  classGrid.innerHTML = "";
+
+  const subjects =
+    getAvailableSubjects(currentClass);
+
+
+  const heading = document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        ${currentClass}
+      </span>
+
+      <h2>Choose a subject</h2>
+
+    </div>
+
+    <p>
+      Select a subject to explore its
+      first, second and third term resources.
+    </p>
+
+  `;
+
+
+  libraryView.innerHTML = "";
+
+  libraryView.appendChild(heading);
+
+
+  if (!subjects.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "No resources yet",
+        `There are currently no uploaded resources for ${currentClass}.`
+      )
     );
 
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+    renderBreadcrumb();
+
+    return;
+
+  }
+
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "navigation-grid";
+
+
+  subjects.forEach((subject, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "navigation-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.05}s`;
+
+
+    const icon =
+      getSubjectIcon(subject);
+
+
+    const count =
+      getSubjectResources(
+        currentClass,
+        subject
+      ).length;
+
+
+    card.innerHTML = `
+
+      <div class="navigation-icon">
+        ${icon}
+      </div>
+
+      <span class="navigation-arrow">→</span>
+
+      <h3>${subject}</h3>
+
+      <p>
+        ${count} resource${count === 1 ? "" : "s"} available
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentSubject = subject;
+      currentTerm = null;
+
+      renderTerms();
+
+      scrollToLibrary();
+
+    });
+
+
+    grid.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(grid);
+
+  renderBreadcrumb();
+
 }
 
-.hero-copy p {
-  max-width: 560px;
 
-  margin-bottom: 32px;
+/* =========================================================
+   TERM VIEW
+   ========================================================= */
 
-  color: #d9d1e8;
+function renderTerms() {
 
-  font-size: 17px;
-  line-height: 1.75;
-}
-
-.primary-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 15px;
-
-  padding: 15px 21px;
-
-  border-radius: 14px;
-
-  color: var(--purple-900);
-  background: white;
-
-  font-size: 14px;
-  font-weight: 800;
-
-  box-shadow: 0 14px 35px rgba(0,0,0,0.18);
-
-  transition: 0.25s ease;
-}
-
-.primary-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.25);
-}
-
-.primary-button span {
-  font-size: 19px;
-}
+  libraryView.innerHTML = "";
 
 
-/* ================= HERO VISUAL ================= */
+  const heading =
+    document.createElement("div");
 
-.hero-visual {
-  position: relative;
+  heading.className =
+    "library-header animate-in";
 
-  min-height: 430px;
+  heading.innerHTML = `
 
-  display: grid;
-  place-items: center;
-}
+    <div>
 
-.hero-center-card {
-  width: 260px;
-  min-height: 315px;
+      <span class="section-kicker">
+        ${currentClass} · ${currentSubject}
+      </span>
 
-  padding: 34px;
+      <h2>Choose a term</h2>
 
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+    </div>
 
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 30px;
+    <p>
+      Select a term to see the lesson plans
+      and lesson notes organised by week.
+    </p>
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255,255,255,0.15),
-      rgba(255,255,255,0.04)
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  const terms =
+    getAvailableTerms(
+      currentClass,
+      currentSubject
     );
 
-  box-shadow:
-    0 30px 70px rgba(0,0,0,0.25),
-    inset 0 1px 0 rgba(255,255,255,0.12);
 
-  backdrop-filter: blur(20px);
+  if (!terms.length) {
 
-  transform: rotate(3deg);
-}
-
-.hero-book-icon {
-  width: 55px;
-  height: 55px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 17px;
-
-  background: rgba(255,255,255,0.12);
-
-  color: #ddd0ff;
-
-  font-size: 25px;
-}
-
-.hero-center-card > span {
-  margin-top: 40px;
-
-  color: #c4b5fd;
-
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-}
-
-.hero-center-card strong {
-  font-family: "Playfair Display", serif;
-
-  font-size: 34px;
-  line-height: 1.05;
-}
-
-.floating-card {
-  position: absolute;
-
-  display: flex;
-  align-items: center;
-  gap: 11px;
-
-  padding: 13px 16px;
-
-  border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 15px;
-
-  background: rgba(255,255,255,0.1);
-
-  backdrop-filter: blur(18px);
-
-  box-shadow: 0 20px 40px rgba(0,0,0,0.18);
-}
-
-.floating-card strong,
-.floating-card small {
-  display: block;
-}
-
-.floating-card strong {
-  font-size: 12px;
-}
-
-.floating-card small {
-  color: #cfc5df;
-  font-size: 9px;
-}
-
-.mini-icon {
-  width: 33px;
-  height: 33px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 10px;
-
-  background: rgba(255,255,255,0.12);
-}
-
-.card-one {
-  top: 65px;
-  left: -5px;
-}
-
-.card-two {
-  right: -5px;
-  bottom: 65px;
-}
-
-
-/* ================= SEARCH ================= */
-
-.search-section {
-  position: relative;
-  z-index: 5;
-
-  margin-top: -45px;
-}
-
-.search-panel {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  align-items: center;
-  gap: 25px;
-
-  padding: 22px 24px;
-
-  border: 1px solid rgba(76,29,149,0.09);
-  border-radius: 22px;
-
-  background: rgba(255,255,255,0.96);
-
-  box-shadow: var(--shadow-lg);
-
-  backdrop-filter: blur(20px);
-}
-
-.search-heading {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-.search-heading > span {
-  width: 43px;
-  height: 43px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 13px;
-
-  color: var(--purple-700);
-  background: var(--purple-100);
-
-  font-size: 23px;
-}
-
-.search-heading strong,
-.search-heading small {
-  display: block;
-}
-
-.search-heading strong {
-  font-size: 14px;
-}
-
-.search-heading small {
-  margin-top: 2px;
-
-  color: var(--muted);
-
-  font-size: 11px;
-}
-
-.search-input-wrap {
-  position: relative;
-}
-
-.search-input-wrap input {
-  width: 100%;
-
-  padding: 15px 45px 15px 18px;
-
-  border: 1px solid #e5e0ed;
-  border-radius: 13px;
-
-  outline: none;
-
-  color: var(--ink);
-  background: #fbfaff;
-
-  font-size: 13px;
-
-  transition: 0.2s ease;
-}
-
-.search-input-wrap input:focus {
-  border-color: var(--purple-400);
-
-  box-shadow:
-    0 0 0 4px rgba(124,58,237,0.08);
-}
-
-#clearSearch {
-  position: absolute;
-
-  right: 8px;
-  top: 50%;
-
-  width: 32px;
-  height: 32px;
-
-  transform: translateY(-50%);
-
-  border: 0;
-  border-radius: 9px;
-
-  color: #8b8497;
-  background: transparent;
-
-  font-size: 21px;
-
-  opacity: 0;
-  pointer-events: none;
-
-  transition: 0.2s;
-}
-
-#clearSearch.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-
-/* ================= SECTION ================= */
-
-.classes-section {
-  padding: 100px 0 60px;
-}
-
-.section-intro {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 40px;
-
-  margin-bottom: 34px;
-}
-
-.section-kicker {
-  display: inline-block;
-
-  margin-bottom: 8px;
-
-  color: var(--purple-600);
-
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-}
-
-.section-intro h2 {
-  font-family: "Playfair Display", serif;
-
-  font-size: clamp(32px, 4vw, 48px);
-  line-height: 1.05;
-
-  letter-spacing: -0.03em;
-}
-
-.section-intro p {
-  max-width: 400px;
-
-  color: var(--muted);
-
-  font-size: 13px;
-}
-
-
-/* ================= CLASS CARDS ================= */
-
-.class-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.class-card {
-  position: relative;
-
-  min-height: 185px;
-
-  padding: 25px;
-
-  overflow: hidden;
-
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-
-  background: white;
-
-  box-shadow: var(--shadow-sm);
-
-  cursor: pointer;
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.class-card::before {
-  content: "";
-
-  position: absolute;
-
-  width: 160px;
-  height: 160px;
-
-  right: -60px;
-  bottom: -70px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(124,58,237,0.16),
-      transparent 70%
+    libraryView.appendChild(
+      createEmptyState(
+        "No terms available",
+        "Resources for this subject have not been uploaded yet."
+      )
     );
 
-  transition: 0.3s ease;
+    renderBreadcrumb();
+
+    return;
+
+  }
+
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "navigation-grid";
+
+
+  terms.forEach((term, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "navigation-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.06}s`;
+
+
+    const count =
+      getTermResources(
+        currentClass,
+        currentSubject,
+        term
+      ).length;
+
+
+    card.innerHTML = `
+
+      <div class="navigation-icon">
+        ${getTermIcon(term)}
+      </div>
+
+      <span class="navigation-arrow">→</span>
+
+      <h3>${term}</h3>
+
+      <p>
+        ${count} weekly resource${count === 1 ? "" : "s"}
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentTerm = term;
+
+      renderWeeks();
+
+      scrollToLibrary();
+
+    });
+
+
+    grid.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(grid);
+
+  renderBreadcrumb();
+
 }
 
-.class-card:hover {
-  transform: translateY(-7px);
 
-  border-color: rgba(124,58,237,0.25);
+/* =========================================================
+   WEEK VIEW
+   ========================================================= */
 
-  box-shadow:
-    0 25px 55px rgba(76,29,149,0.13);
-}
+function renderWeeks() {
 
-.class-card:hover::before {
-  transform: scale(1.5);
-}
+  libraryView.innerHTML = "";
 
-.class-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 
-  width: 47px;
-  height: 47px;
+  const heading =
+    document.createElement("div");
 
-  margin-bottom: 22px;
+  heading.className =
+    "library-header animate-in";
 
-  border-radius: 14px;
+  heading.innerHTML = `
 
-  color: white;
+    <div>
 
-  background:
-    linear-gradient(
-      135deg,
-      var(--purple-500),
-      var(--purple-800)
+      <span class="section-kicker">
+        ${currentClass} · ${currentSubject}
+      </span>
+
+      <h2>${currentTerm}</h2>
+
+    </div>
+
+    <p>
+      Choose a week to download the available
+      lesson plan and lesson notes.
+    </p>
+
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  const termResources =
+    getTermResources(
+      currentClass,
+      currentSubject,
+      currentTerm
     );
 
-  font-size: 14px;
-  font-weight: 800;
 
-  box-shadow:
-    0 10px 24px rgba(109,40,217,0.25);
-}
-
-.class-card h3 {
-  position: relative;
-  z-index: 1;
-
-  margin-bottom: 3px;
-
-  font-size: 18px;
-}
-
-.class-card p {
-  position: relative;
-  z-index: 1;
-
-  color: var(--muted);
-
-  font-size: 11px;
-}
-
-.class-arrow {
-  position: absolute;
-
-  right: 22px;
-  top: 25px;
-
-  color: var(--purple-500);
-
-  font-size: 22px;
-
-  transition: 0.25s;
-}
-
-.class-card:hover .class-arrow {
-  transform: translateX(5px);
-}
-
-
-/* ================= ADS ================= */
-
-.ad-section {
-  padding: 20px 0 70px;
-}
-
-.ad-box {
-  min-height: 90px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: 1px dashed #d9d2e5;
-  border-radius: 16px;
-
-  color: #aaa3b2;
-
-  background: #fbfaff;
-
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-}
-
-
-/* ================= LIBRARY ================= */
-
-.library-section {
-  padding: 0 0 100px;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-
-  min-height: 28px;
-
-  margin-bottom: 25px;
-
-  color: var(--muted);
-
-  font-size: 12px;
-}
-
-.breadcrumb button {
-  border: 0;
-  background: transparent;
-
-  color: var(--purple-600);
-
-  font-weight: 700;
-}
-
-.breadcrumb .separator {
-  color: #c2bbc9;
-}
-
-.library-header {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-
-  gap: 30px;
-
-  margin-bottom: 30px;
-}
-
-.library-header h2 {
-  margin-top: 4px;
-
-  font-family: "Playfair Display", serif;
-
-  font-size: clamp(30px, 4vw, 44px);
-  line-height: 1.05;
-}
-
-.library-header p {
-  max-width: 430px;
-
-  color: var(--muted);
-
-  font-size: 13px;
-}
-
-
-/* ================= SUBJECT / TERM CARDS ================= */
-
-.navigation-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.navigation-card {
-  position: relative;
-
-  min-height: 160px;
-
-  padding: 24px;
-
-  border: 1px solid var(--border);
-  border-radius: 22px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #faf8ff
+  const sorted =
+    [...termResources].sort(
+      (a, b) =>
+        extractWeekNumber(a.week) -
+        extractWeekNumber(b.week)
     );
 
-  box-shadow: var(--shadow-sm);
 
-  cursor: pointer;
+  if (!sorted.length) {
 
-  transition: 0.3s ease;
-}
-
-.navigation-card:hover {
-  transform: translateY(-6px);
-
-  border-color: rgba(124,58,237,0.24);
-
-  box-shadow:
-    0 22px 50px rgba(76,29,149,0.12);
-}
-
-.navigation-icon {
-  width: 45px;
-  height: 45px;
-
-  display: grid;
-  place-items: center;
-
-  margin-bottom: 20px;
-
-  border-radius: 13px;
-
-  color: var(--purple-700);
-
-  background: var(--purple-100);
-
-  font-size: 19px;
-}
-
-.navigation-card h3 {
-  margin-bottom: 4px;
-
-  font-size: 16px;
-}
-
-.navigation-card p {
-  color: var(--muted);
-
-  font-size: 11px;
-}
-
-.navigation-arrow {
-  position: absolute;
-
-  right: 20px;
-  top: 20px;
-
-  color: var(--purple-500);
-
-  font-size: 19px;
-}
-
-
-/* ================= WEEK CARDS ================= */
-
-.week-list {
-  display: grid;
-  gap: 13px;
-}
-
-.week-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 20px;
-
-  padding: 19px 21px;
-
-  border: 1px solid var(--border);
-  border-radius: 17px;
-
-  background: white;
-
-  box-shadow: 0 5px 20px rgba(38,16,84,0.045);
-
-  transition: 0.25s ease;
-}
-
-.week-card:hover {
-  transform: translateX(4px);
-
-  border-color: rgba(124,58,237,0.22);
-
-  box-shadow: var(--shadow-sm);
-}
-
-.week-info {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-
-  min-width: 0;
-}
-
-.week-number {
-  flex-shrink: 0;
-
-  width: 43px;
-  height: 43px;
-
-  display: grid;
-  place-items: center;
-
-  border-radius: 12px;
-
-  color: var(--purple-700);
-  background: var(--purple-100);
-
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.week-info h3 {
-  font-size: 14px;
-}
-
-.week-info p {
-  margin-top: 2px;
-
-  color: var(--muted);
-
-  font-size: 11px;
-}
-
-.resource-actions {
-  display: flex;
-  gap: 8px;
-
-  flex-shrink: 0;
-}
-
-.download-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-
-  padding: 9px 12px;
-
-  border-radius: 10px;
-
-  color: var(--purple-700);
-  background: var(--purple-100);
-
-  font-size: 10px;
-  font-weight: 800;
-
-  transition: 0.2s;
-}
-
-.download-button:hover {
-  color: white;
-  background: var(--purple-600);
-}
-
-.download-button.notes {
-  color: #fff;
-  background: var(--purple-600);
-}
-
-.download-button.notes:hover {
-  background: var(--purple-800);
-}
-
-
-/* ================= EMPTY STATE ================= */
-
-.empty-state {
-  padding: 65px 25px;
-
-  text-align: center;
-
-  border: 1px dashed #dcd5e8;
-  border-radius: 22px;
-
-  background: #fbfaff;
-}
-
-.empty-icon {
-  width: 55px;
-  height: 55px;
-
-  display: grid;
-  place-items: center;
-
-  margin: 0 auto 15px;
-
-  border-radius: 16px;
-
-  color: var(--purple-600);
-  background: var(--purple-100);
-
-  font-size: 24px;
-}
-
-.empty-state h3 {
-  margin-bottom: 5px;
-
-  font-family: "Playfair Display", serif;
-
-  font-size: 24px;
-}
-
-.empty-state p {
-  color: var(--muted);
-
-  font-size: 12px;
-}
-
-
-/* ================= ABOUT ================= */
-
-.about-section {
-  padding: 20px 0 100px;
-}
-
-.about-card {
-  position: relative;
-
-  display: grid;
-  grid-template-columns: 120px 1fr;
-  align-items: center;
-  gap: 40px;
-
-  padding: 55px;
-
-  overflow: hidden;
-
-  border-radius: var(--radius-lg);
-
-  color: white;
-
-  background:
-    radial-gradient(
-      circle at 90% 10%,
-      rgba(167,139,250,0.3),
-      transparent 30%
-    ),
-    linear-gradient(
-      135deg,
-      #24103f,
-      #4c1d95
+    libraryView.appendChild(
+      createEmptyState(
+        "No weekly resources",
+        "There are currently no lesson materials uploaded for this term."
+      )
     );
 
-  box-shadow: var(--shadow-lg);
-}
+    renderBreadcrumb();
 
-.about-mark {
-  width: 105px;
-  height: 105px;
+    return;
 
-  display: grid;
-  place-items: center;
-
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 30px;
-
-  background: rgba(255,255,255,0.08);
-
-  font-size: 27px;
-  font-weight: 800;
-}
-
-.about-content .section-kicker {
-  color: #c4b5fd;
-}
-
-.about-content h2 {
-  max-width: 700px;
-
-  margin-bottom: 15px;
-
-  font-family: "Playfair Display", serif;
-
-  font-size: clamp(30px, 4vw, 45px);
-  line-height: 1.05;
-}
-
-.about-content h2 span {
-  color: #c4b5fd;
-}
-
-.about-content p {
-  max-width: 700px;
-
-  color: #d9d1e8;
-
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-
-/* ================= FOOTER ================= */
-
-.site-footer {
-  padding: 45px 0 25px;
-
-  border-top: 1px solid #eeeaf4;
-
-  background: #fbfaff;
-}
-
-.footer-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 40px;
-
-  padding-bottom: 30px;
-}
-
-.footer-brand p {
-  margin-top: 13px;
-
-  color: var(--muted);
-
-  font-size: 11px;
-}
-
-.footer-links {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-}
-
-.footer-links a {
-  color: var(--muted);
-
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.footer-links a:hover {
-  color: var(--purple-600);
-}
-
-.footer-bottom {
-  padding-top: 20px;
-
-  border-top: 1px solid #eeeaf4;
-
-  color: #9991a4;
-
-  font-size: 10px;
-}
-
-
-/* ================= SEARCH RESULTS ================= */
-
-.search-results-title {
-  margin-bottom: 20px;
-
-  font-family: "Playfair Display", serif;
-
-  font-size: 30px;
-}
-
-.search-result-card {
-  margin-bottom: 12px;
-}
-
-
-/* ================= ANIMATION ================= */
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-.animate-in {
-  animation: fadeUp 0.4s ease both;
-}
+  const list =
+    document.createElement("div");
+
+  list.className =
+    "week-list";
 
 
-/* ================= RESPONSIVE ================= */
+  sorted.forEach((resource, index) => {
 
-@media (max-width: 900px) {
+    const card =
+      document.createElement("article");
 
-  .hero-inner {
-    grid-template-columns: 1fr;
-    padding: 75px 0;
-  }
+    card.className =
+      "week-card animate-in";
 
-  .hero {
-    min-height: auto;
-  }
+    card.style.animationDelay =
+      `${index * 0.04}s`;
 
-  .hero-inner {
-    min-height: auto;
-  }
 
-  .hero-copy {
-    text-align: center;
-    margin-inline: auto;
-  }
+    const topic =
+      resource.topic ||
+      "Lesson resources";
 
-  .hero-copy p {
-    margin-inline: auto;
-  }
 
-  .hero-visual {
-    min-height: 350px;
-    max-width: 500px;
-    width: 100%;
-    margin-inline: auto;
-  }
+    card.innerHTML = `
 
-  .search-panel {
-    grid-template-columns: 1fr;
-  }
+      <div class="week-info">
 
-  .class-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+        <span class="week-number">
+          ${extractWeekNumber(resource.week)}
+        </span>
 
-  .navigation-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+        <div>
 
-  .section-intro,
-  .library-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+          <h3>
+            ${resource.week}
+          </h3>
 
-  .about-card {
-    grid-template-columns: 1fr;
-  }
+          <p>
+            ${topic}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="resource-actions">
+
+        ${
+          resource.plan
+            ? `
+              <a
+                class="download-button"
+                href="${encodeURI(resource.plan)}"
+                download
+              >
+                ↓ Lesson Plan
+              </a>
+            `
+            : ""
+        }
+
+        ${
+          resource.notes
+            ? `
+              <a
+                class="download-button notes"
+                href="${encodeURI(resource.notes)}"
+                download
+              >
+                ↓ Lesson Notes
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+
+    list.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(list);
+
+  renderBreadcrumb();
 
 }
 
 
-@media (max-width: 650px) {
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
 
-  .container {
-    width: min(100% - 28px, var(--max-width));
+function createEmptyState(title, message) {
+
+  const state =
+    document.createElement("div");
+
+  state.className =
+    "empty-state animate-in";
+
+
+  state.innerHTML = `
+
+    <div class="empty-icon">
+      ✦
+    </div>
+
+    <h3>${title}</h3>
+
+    <p>${message}</p>
+
+  `;
+
+
+  return state;
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function performSearch(query) {
+
+  const value =
+    query.trim().toLowerCase();
+
+
+  clearSearch.classList.toggle(
+    "visible",
+    value.length > 0
+  );
+
+
+  if (!value) {
+
+    renderClasses();
+
+    return;
+
   }
 
-  .header-inner {
-    min-height: 68px;
+
+  classGrid.innerHTML = "";
+
+  libraryView.innerHTML = "";
+
+  breadcrumb.innerHTML = "";
+
+
+  const results =
+    resources.filter(resource => {
+
+      const searchable = [
+
+        resource.class,
+        resource.subject,
+        resource.term,
+        resource.week,
+        resource.topic
+
+      ]
+        .join(" ")
+        .toLowerCase();
+
+
+      return searchable.includes(value);
+
+    });
+
+
+  const heading =
+    document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        SEARCH RESULTS
+      </span>
+
+      <h2>
+        ${results.length} result${results.length === 1 ? "" : "s"}
+      </h2>
+
+    </div>
+
+    <p>
+      Showing resources matching
+      “${escapeHTML(query)}”.
+    </p>
+
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  if (!results.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "Nothing found",
+        "Try searching for another class, subject, term, week or topic."
+      )
+    );
+
+    return;
+
   }
 
-  .menu-button {
-    display: grid;
-    place-items: center;
+
+  const list =
+    document.createElement("div");
+
+  list.className =
+    "week-list";
+
+
+  results.forEach((resource, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "week-card search-result-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.03}s`;
+
+
+    card.innerHTML = `
+
+      <div class="week-info">
+
+        <span class="week-number">
+          ${extractWeekNumber(resource.week)}
+        </span>
+
+        <div>
+
+          <h3>
+            ${resource.class}
+            · ${resource.subject}
+          </h3>
+
+          <p>
+            ${resource.term}
+            · ${resource.week}
+            · ${resource.topic || "Lesson resource"}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="resource-actions">
+
+        ${
+          resource.plan
+            ? `
+              <a
+                class="download-button"
+                href="${encodeURI(resource.plan)}"
+                download
+              >
+                ↓ Plan
+              </a>
+            `
+            : ""
+        }
+
+        ${
+          resource.notes
+            ? `
+              <a
+                class="download-button notes"
+                href="${encodeURI(resource.notes)}"
+                download
+              >
+                ↓ Notes
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+
+    list.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(list);
+
+}
+
+
+/* =========================================================
+   UTILITY FUNCTIONS
+   ========================================================= */
+
+function extractWeekNumber(week) {
+
+  if (!week) return 0;
+
+  const match =
+    String(week).match(/\d+/);
+
+  return match
+    ? Number(match[0])
+    : 0;
+
+}
+
+
+function getSubjectIcon(subject) {
+
+  const icons = {
+
+    "Mathematics": "∑",
+
+    "Computing": "⌘",
+
+    "English": "Aa",
+
+    "Science": "⚗",
+
+    "Social Studies": "◎"
+
+  };
+
+
+  return icons[subject] || "✦";
+
+}
+
+
+function getTermIcon(term) {
+
+  if (term === "First Term") return "01";
+
+  if (term === "Second Term") return "02";
+
+  if (term === "Third Term") return "03";
+
+  return "✦";
+
+}
+
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+menuButton.addEventListener("click", () => {
+
+  mainNav.classList.toggle("open");
+
+});
+
+
+mainNav.querySelectorAll("a")
+  .forEach(link => {
+
+    link.addEventListener("click", () => {
+
+      mainNav.classList.remove("open");
+
+    });
+
+  });
+
+
+/* =========================================================
+   SEARCH EVENTS
+   ========================================================= */
+
+searchInput.addEventListener(
+  "input",
+  () => {
+
+    performSearch(
+      searchInput.value
+    );
+
   }
+);
 
-  #mainNav {
-    position: absolute;
 
-    top: 68px;
-    left: 14px;
-    right: 14px;
+clearSearch.addEventListener(
+  "click",
+  () => {
 
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
+    searchInput.value = "";
 
-    padding: 8px;
+    clearSearch.classList.remove(
+      "visible"
+    );
 
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    renderClasses();
 
-    background: white;
+    searchInput.focus();
 
-    box-shadow: var(--shadow-lg);
   }
+);
 
-  #mainNav.open {
-    display: flex;
-  }
 
-  #mainNav a {
-    padding: 12px 14px;
-    border-radius: 10px;
-  }
+/* =========================================================
+   INITIALISE
+   ========================================================= */
 
-  #mainNav a:hover {
-    background: var(--purple-100);
-  }
+yearElement.textContent =
+  new Date().getFullYear();
 
-  #mainNav a::after {
-    display: none;
-  }
 
-  .hero {
-    min-height: 680px;
-  }
-
-  .hero-inner {
-    padding-top: 60px;
-  }
-
-  .hero h1 {
-    font-size: 48px;
-  }
-
-  .hero-copy p {
-    font-size: 14px;
-  }
-
-  .hero-visual {
-    min-height: 280px;
-  }
-
-  .hero-center-card {
-    width: 205px;
-    min-height: 245px;
-    padding: 25px;
-  }
-
-  .hero-center-card strong {
-    font-si
+renderClasses();
