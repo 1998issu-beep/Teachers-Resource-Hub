@@ -38,7 +38,7 @@ const resources = [
     topic: "Information and Communication Technology",
     plan: "Basic9-Computing-Week1-Lesson-Plan.pdf",
     notes: "Basic9-Computing-Week1-Lesson-Notes.pdf"
-  }
+  },
 
   {
     class: "Basic 8",
