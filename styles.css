@@ -1,569 +1,1117 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-:root {
-  --purple: #6d28d9;
-  --purple-dark: #4c1d95;
-  --purple-light: #f3e8ff;
-  --purple-soft: #faf5ff;
-
-  --dark: #17131f;
-  --text: #292330;
-  --muted: #746d7e;
-
-  --white: #ffffff;
-  --border: #e9e3ef;
-
-  --shadow: 0 10px 30px rgba(38, 20, 62, 0.08);
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: #ffffff;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button,
-input {
-  font: inherit;
-}
-
-.container {
-  width: min(1120px, 92%);
-  margin: 0 auto;
-}
-
-
-/* HEADER */
-
-.site-header {
-  background: rgba(255, 255, 255, 0.96);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(12px);
-}
-
-.header-inner {
-  min-height: 74px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--dark);
-}
-
-.logo-icon {
-  width: 39px;
-  height: 39px;
-  display: grid;
-  place-items: center;
-  border-radius: 11px;
-  color: white;
-  background: var(--purple);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-nav {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-
-nav a {
-  font-size: 14px;
-  font-weight: 600;
-  color: #514a59;
-}
-
-nav a:hover {
-  color: var(--purple);
-}
-
-.menu-button {
-  display: none;
-  border: 0;
-  background: transparent;
-  font-size: 26px;
-  cursor: pointer;
-}
-
-
-/* HERO */
-
-.hero {
-  background:
-    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.35), transparent 28%),
-    linear-gradient(135deg, #21112f, #3b1761 55%, #5b21b6);
-  color: white;
-  overflow: hidden;
-}
-
-.hero-content {
-  min-height: 480px;
-  display: flex;
-  align-items: center;
-}
-
-.hero-text {
-  max-width: 720px;
-  padding: 70px 0;
-}
-
-.hero-label {
-  display: inline-block;
-  font-size: 12px;
-  letter-spacing: 2px;
-  font-weight: 800;
-  color: #e9d5ff;
-  margin-bottom: 17px;
-}
-
-.hero h1 {
-  font-size: clamp(38px, 6vw, 68px);
-  line-height: 1.04;
-  letter-spacing: -2px;
-  margin-bottom: 24px;
-}
-
-.hero h1 span {
-  color: #d8b4fe;
-}
+/* =========================================================
+   TEACHER RESOURCE HUB
+   Navigation Engine
+   Class → Subject → Term → Week → Downloads
+   ========================================================= */
 
-.hero p {
-  max-width: 650px;
-  color: #eadff4;
-  font-size: 18px;
-  margin-bottom: 32px;
-}
-
-.hero-button {
-  display: inline-block;
-  padding: 14px 22px;
-  background: white;
-  color: var(--purple-dark);
-  border-radius: 9px;
-  font-weight: 800;
-  transition: 0.2s;
-}
-
-.hero-button:hover {
-  transform: translateY(-2px);
-}
-
+const classGrid = document.getElementById("classGrid");
+const libraryView = document.getElementById("libraryView");
+const breadcrumb = document.getElementById("breadcrumb");
 
-/* SEARCH */
+const searchInput = document.getElementById("searchInput");
+const clearSearch = document.getElementById("clearSearch");
 
-.search-section {
-  margin-top: -35px;
-  position: relative;
-  z-index: 10;
-}
-
-.search-box {
-  max-width: 800px;
-  margin: auto;
-  background: white;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow);
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 5px 20px;
-}
+const menuButton = document.getElementById("menuButton");
+const mainNav = document.getElementById("mainNav");
 
-.search-box span {
-  font-size: 27px;
-  color: var(--purple);
-}
+const yearElement = document.getElementById("year");
 
-.search-box input {
-  width: 100%;
-  height: 58px;
-  border: 0;
-  outline: 0;
-  font-size: 16px;
-  color: var(--text);
-}
 
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
 
-/* SECTIONS */
+const JHS_SUBJECTS = [
+  "Mathematics",
+  "Computing",
+  "English",
+  "Science",
+  "Social Studies"
+];
 
-.classes-section,
-.resources-section,
-.about-section {
-  padding: 80px 0;
-}
+const PRIMARY_SUBJECTS = [
+  "Mathematics",
+  "English",
+  "Science",
+  "Social Studies"
+];
 
-.section-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin-bottom: 30px;
-}
+const TERMS = [
+  "First Term",
+  "Second Term",
+  "Third Term"
+];
 
-.section-label {
-  display: block;
-  color: var(--purple);
-  font-size: 11px;
-  letter-spacing: 1.7px;
-  font-weight: 800;
-  margin-bottom: 7px;
-}
+const CLASSES = [
+  "Basic 1",
+  "Basic 2",
+  "Basic 3",
+  "Basic 4",
+  "Basic 5",
+  "Basic 6",
+  "Basic 7",
+  "Basic 8",
+  "Basic 9"
+];
 
-.section-heading h2,
-.about-section h2 {
-  color: var(--dark);
-  font-size: 31px;
-  line-height: 1.15;
-}
 
+/* =========================================================
+   NAVIGATION STATE
+   ========================================================= */
 
-/* CLASS BUTTONS */
+let currentClass = null;
+let currentSubject = null;
+let currentTerm = null;
 
-.class-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
 
-.class-filter {
-  background: white;
-  border: 1px solid var(--border);
-  color: #4e4658;
-  padding: 10px 17px;
-  border-radius: 30px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: 0.2s;
-}
+/* =========================================================
+   HELPERS
+   ========================================================= */
 
-.class-filter:hover,
-.class-filter.active {
-  background: var(--purple);
-  color: white;
-  border-color: var(--purple);
-}
+function getSubjectsForClass(className) {
 
+  const classNumber = Number(
+    className.replace("Basic ", "")
+  );
 
-/* ADS */
-
-.ad-box {
-  min-height: 90px;
-  border: 1px dashed #d9d1df;
-  background: #faf9fb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #aaa1b0;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  margin-bottom: 20px;
+  return classNumber >= 7
+    ? JHS_SUBJECTS
+    : PRIMARY_SUBJECTS;
 }
 
 
-/* RESOURCES */
+function getClassNumber(className) {
 
-.resource-heading {
-  margin-bottom: 28px;
-}
-
-.resource-count {
-  color: var(--muted);
-  font-size: 14px;
-}
+  return Number(
+    className.replace("Basic ", "")
+  );
 
-.resource-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
 }
 
-.resource-card {
-  border: 1px solid var(--border);
-  border-radius: 15px;
-  padding: 22px;
-  background: white;
-  transition: 0.2s;
-  box-shadow: 0 4px 16px rgba(30, 20, 40, 0.03);
-}
 
-.resource-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
-  border-color: #d9c4f5;
-}
+function resourceExistsForClass(className) {
 
-.resource-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 10px;
-  margin-bottom: 17px;
-}
+  return resources.some(
+    item => item.class === className
+  );
 
-.class-badge {
-  background: var(--purple-light);
-  color: var(--purple-dark);
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 800;
 }
 
-.subject {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 700;
-}
 
-.resource-card h3 {
-  color: var(--dark);
-  font-size: 19px;
-  line-height: 1.3;
-  margin-bottom: 8px;
-}
+function getSubjectResources(className, subject) {
 
-.resource-meta {
-  color: var(--muted);
-  font-size: 13px;
-  margin-bottom: 21px;
-}
+  return resources.filter(
+    item =>
+      item.class === className &&
+      item.subject === subject
+  );
 
-.download-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
 }
 
-.download-button {
-  display: block;
-  text-align: center;
-  padding: 10px 7px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 800;
-  border: 1px solid var(--purple);
-  color: var(--purple);
-  transition: 0.2s;
-}
 
-.download-button:hover {
-  background: var(--purple);
-  color: white;
-}
+function getTermResources(className, subject, term) {
 
-.download-button.primary {
-  background: var(--purple);
-  color: white;
-}
+  return resources.filter(
+    item =>
+      item.class === className &&
+      item.subject === subject &&
+      item.term === term
+  );
 
-.download-button.primary:hover {
-  background: var(--purple-dark);
 }
 
 
-/* NO RESULTS */
+function getAvailableSubjects(className) {
 
-.no-results {
-  display: none;
-  text-align: center;
-  padding: 70px 20px;
-}
-
-.no-results.show {
-  display: block;
-}
+  const allowedSubjects =
+    getSubjectsForClass(className);
 
-.no-results-icon {
-  font-size: 40px;
-  color: var(--purple);
-}
-
-.no-results h3 {
-  margin: 10px 0 5px;
-  color: var(--dark);
-}
+  return allowedSubjects.filter(subject =>
+    resources.some(
+      item =>
+        item.class === className &&
+        item.subject === subject
+    )
+  );
 
-.no-results p {
-  color: var(--muted);
 }
 
 
-/* ABOUT */
+function getAvailableTerms(className, subject) {
 
-.about-section {
-  background: var(--purple-soft);
-}
-
-.about-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 70px;
-  align-items: center;
-}
+  return TERMS.filter(term =>
+    resources.some(
+      item =>
+        item.class === className &&
+        item.subject === subject &&
+        item.term === term
+    )
+  );
 
-.about-section h2 {
-  font-size: 38px;
 }
-
-.about-section p {
-  color: #665e6d;
-  margin-bottom: 18px;
-}
-
 
-/* FOOTER */
 
-.site-footer {
-  background: var(--dark);
-  color: white;
-  padding: 45px 0 20px;
-}
+function scrollToLibrary() {
 
-.footer-inner {
-  display: flex;
-  justify-content: space-between;
-  gap: 30px;
-  padding-bottom: 30px;
-}
+  document.querySelector(".library-section")
+    .scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
 
-.footer-inner strong {
-  font-size: 18px;
 }
 
-.footer-inner p {
-  color: #aaa1b0;
-  margin-top: 6px;
-  font-size: 14px;
-}
 
-.footer-links {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
+/* =========================================================
+   BREADCRUMBS
+   ========================================================= */
 
-.footer-links a {
-  color: #cfc7d5;
-  font-size: 13px;
-}
+function renderBreadcrumb() {
 
-.footer-links a:hover {
-  color: white;
-}
+  if (!currentClass) {
 
-.copyright {
-  border-top: 1px solid #332d3a;
-  padding-top: 18px;
-  color: #827987;
-  font-size: 12px;
-}
+    breadcrumb.innerHTML = "";
 
+    return;
 
-/* MOBILE */
-
-@media (max-width: 850px) {
-
-  nav {
-    display: none;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 74px;
-    background: white;
-    border-bottom: 1px solid var(--border);
-    padding: 20px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 18px;
   }
 
-  nav.open {
-    display: flex;
+
+  let html = `
+    <button data-level="classes">
+      Classes
+    </button>
+  `;
+
+
+  if (currentClass) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <button data-level="subjects">
+        ${currentClass}
+      </button>
+    `;
+
   }
 
-  .menu-button {
-    display: block;
+
+  if (currentSubject) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <button data-level="terms">
+        ${currentSubject}
+      </button>
+    `;
+
   }
 
-  .resource-grid {
-    grid-template-columns: repeat(2, 1fr);
+
+  if (currentTerm) {
+
+    html += `
+      <span class="separator">/</span>
+
+      <span>${currentTerm}</span>
+    `;
+
   }
 
-  .about-grid {
-    grid-template-columns: 1fr;
-    gap: 25px;
-  }
+
+  breadcrumb.innerHTML = html;
+
+
+  breadcrumb
+    .querySelectorAll("button")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const level =
+          button.dataset.level;
+
+        if (level === "classes") {
+
+          currentClass = null;
+          currentSubject = null;
+          currentTerm = null;
+
+          renderClasses();
+
+          document
+            .querySelector("#classes")
+            .scrollIntoView({
+              behavior: "smooth"
+            });
+
+        }
+
+
+        if (level === "subjects") {
+
+          currentSubject = null;
+          currentTerm = null;
+
+          renderSubjects();
+
+          scrollToLibrary();
+
+        }
+
+
+        if (level === "terms") {
+
+          currentTerm = null;
+
+          renderTerms();
+
+          scrollToLibrary();
+
+        }
+
+      });
+
+    });
+
 }
 
 
-@media (max-width: 600px) {
+/* =========================================================
+   CLASS VIEW
+   ========================================================= */
 
-  .hero-content {
-    min-height: 430px;
-  }
+function renderClasses() {
 
-  .hero-text {
-    padding: 55px 0;
-  }
+  classGrid.innerHTML = "";
 
-  .hero h1 {
-    font-size: 42px;
-  }
+  CLASSES.forEach((className, index) => {
 
-  .hero p {
-    font-size: 16px;
-  }
+    const available =
+      resourceExistsForClass(className);
 
-  .classes-section,
-  .resources-section,
-  .about-section {
-    padding: 55px 0;
-  }
+    const card =
+      document.createElement("article");
 
-  .section-heading h2 {
-    font-size: 26px;
-  }
+    card.className =
+      "class-card animate-in";
 
-  .resource-grid {
-    grid-template-columns: 1fr;
-  }
+    card.style.animationDelay =
+      `${index * 0.04}s`;
 
-  .about-section h2 {
-    font-size: 29px;
-  }
+    card.innerHTML = `
 
-  .footer-inner {
-    flex-direction: column;
-  }
+      <span class="class-number">
+        ${getClassNumber(className)}
+      </span>
 
-  .footer-links {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
+      <span class="class-arrow">→</span>
+
+      <h3>${className}</h3>
+
+      <p>
+        ${available
+          ? "Explore available teaching resources"
+          : "Resources coming soon"
+        }
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentClass = className;
+      currentSubject = null;
+      currentTerm = null;
+
+      renderSubjects();
+
+      scrollToLibrary();
+
+    });
+
+
+    classGrid.appendChild(card);
+
+  });
+
+
+  libraryView.innerHTML = "";
+
+  renderBreadcrumb();
+
 }
+
+
+/* =========================================================
+   SUBJECT VIEW
+   ========================================================= */
+
+function renderSubjects() {
+
+  classGrid.innerHTML = "";
+
+  const subjects =
+    getAvailableSubjects(currentClass);
+
+
+  const heading = document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        ${currentClass}
+      </span>
+
+      <h2>Choose a subject</h2>
+
+    </div>
+
+    <p>
+      Select a subject to explore its
+      first, second and third term resources.
+    </p>
+
+  `;
+
+
+  libraryView.innerHTML = "";
+
+  libraryView.appendChild(heading);
+
+
+  if (!subjects.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "No resources yet",
+        `There are currently no uploaded resources for ${currentClass}.`
+      )
+    );
+
+    renderBreadcrumb();
+
+    return;
+
+  }
+
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "navigation-grid";
+
+
+  subjects.forEach((subject, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "navigation-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.05}s`;
+
+
+    const icon =
+      getSubjectIcon(subject);
+
+
+    const count =
+      getSubjectResources(
+        currentClass,
+        subject
+      ).length;
+
+
+    card.innerHTML = `
+
+      <div class="navigation-icon">
+        ${icon}
+      </div>
+
+      <span class="navigation-arrow">→</span>
+
+      <h3>${subject}</h3>
+
+      <p>
+        ${count} resource${count === 1 ? "" : "s"} available
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentSubject = subject;
+      currentTerm = null;
+
+      renderTerms();
+
+      scrollToLibrary();
+
+    });
+
+
+    grid.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(grid);
+
+  renderBreadcrumb();
+
+}
+
+
+/* =========================================================
+   TERM VIEW
+   ========================================================= */
+
+function renderTerms() {
+
+  libraryView.innerHTML = "";
+
+
+  const heading =
+    document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        ${currentClass} · ${currentSubject}
+      </span>
+
+      <h2>Choose a term</h2>
+
+    </div>
+
+    <p>
+      Select a term to see the lesson plans
+      and lesson notes organised by week.
+    </p>
+
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  const terms =
+    getAvailableTerms(
+      currentClass,
+      currentSubject
+    );
+
+
+  if (!terms.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "No terms available",
+        "Resources for this subject have not been uploaded yet."
+      )
+    );
+
+    renderBreadcrumb();
+
+    return;
+
+  }
+
+
+  const grid =
+    document.createElement("div");
+
+  grid.className =
+    "navigation-grid";
+
+
+  terms.forEach((term, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "navigation-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.06}s`;
+
+
+    const count =
+      getTermResources(
+        currentClass,
+        currentSubject,
+        term
+      ).length;
+
+
+    card.innerHTML = `
+
+      <div class="navigation-icon">
+        ${getTermIcon(term)}
+      </div>
+
+      <span class="navigation-arrow">→</span>
+
+      <h3>${term}</h3>
+
+      <p>
+        ${count} weekly resource${count === 1 ? "" : "s"}
+      </p>
+
+    `;
+
+
+    card.addEventListener("click", () => {
+
+      currentTerm = term;
+
+      renderWeeks();
+
+      scrollToLibrary();
+
+    });
+
+
+    grid.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(grid);
+
+  renderBreadcrumb();
+
+}
+
+
+/* =========================================================
+   WEEK VIEW
+   ========================================================= */
+
+function renderWeeks() {
+
+  libraryView.innerHTML = "";
+
+
+  const heading =
+    document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        ${currentClass} · ${currentSubject}
+      </span>
+
+      <h2>${currentTerm}</h2>
+
+    </div>
+
+    <p>
+      Choose a week to download the available
+      lesson plan and lesson notes.
+    </p>
+
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  const termResources =
+    getTermResources(
+      currentClass,
+      currentSubject,
+      currentTerm
+    );
+
+
+  const sorted =
+    [...termResources].sort(
+      (a, b) =>
+        extractWeekNumber(a.week) -
+        extractWeekNumber(b.week)
+    );
+
+
+  if (!sorted.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "No weekly resources",
+        "There are currently no lesson materials uploaded for this term."
+      )
+    );
+
+    renderBreadcrumb();
+
+    return;
+
+  }
+
+
+  const list =
+    document.createElement("div");
+
+  list.className =
+    "week-list";
+
+
+  sorted.forEach((resource, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "week-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.04}s`;
+
+
+    const topic =
+      resource.topic ||
+      "Lesson resources";
+
+
+    card.innerHTML = `
+
+      <div class="week-info">
+
+        <span class="week-number">
+          ${extractWeekNumber(resource.week)}
+        </span>
+
+        <div>
+
+          <h3>
+            ${resource.week}
+          </h3>
+
+          <p>
+            ${topic}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="resource-actions">
+
+        ${
+          resource.plan
+            ? `
+              <a
+                class="download-button"
+                href="${encodeURI(resource.plan)}"
+                download
+              >
+                ↓ Lesson Plan
+              </a>
+            `
+            : ""
+        }
+
+        ${
+          resource.notes
+            ? `
+              <a
+                class="download-button notes"
+                href="${encodeURI(resource.notes)}"
+                download
+              >
+                ↓ Lesson Notes
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+
+    list.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(list);
+
+  renderBreadcrumb();
+
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+function createEmptyState(title, message) {
+
+  const state =
+    document.createElement("div");
+
+  state.className =
+    "empty-state animate-in";
+
+
+  state.innerHTML = `
+
+    <div class="empty-icon">
+      ✦
+    </div>
+
+    <h3>${title}</h3>
+
+    <p>${message}</p>
+
+  `;
+
+
+  return state;
+
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+function performSearch(query) {
+
+  const value =
+    query.trim().toLowerCase();
+
+
+  clearSearch.classList.toggle(
+    "visible",
+    value.length > 0
+  );
+
+
+  if (!value) {
+
+    renderClasses();
+
+    return;
+
+  }
+
+
+  classGrid.innerHTML = "";
+
+  libraryView.innerHTML = "";
+
+  breadcrumb.innerHTML = "";
+
+
+  const results =
+    resources.filter(resource => {
+
+      const searchable = [
+
+        resource.class,
+        resource.subject,
+        resource.term,
+        resource.week,
+        resource.topic
+
+      ]
+        .join(" ")
+        .toLowerCase();
+
+
+      return searchable.includes(value);
+
+    });
+
+
+  const heading =
+    document.createElement("div");
+
+  heading.className =
+    "library-header animate-in";
+
+  heading.innerHTML = `
+
+    <div>
+
+      <span class="section-kicker">
+        SEARCH RESULTS
+      </span>
+
+      <h2>
+        ${results.length} result${results.length === 1 ? "" : "s"}
+      </h2>
+
+    </div>
+
+    <p>
+      Showing resources matching
+      “${escapeHTML(query)}”.
+    </p>
+
+  `;
+
+
+  libraryView.appendChild(heading);
+
+
+  if (!results.length) {
+
+    libraryView.appendChild(
+      createEmptyState(
+        "Nothing found",
+        "Try searching for another class, subject, term, week or topic."
+      )
+    );
+
+    return;
+
+  }
+
+
+  const list =
+    document.createElement("div");
+
+  list.className =
+    "week-list";
+
+
+  results.forEach((resource, index) => {
+
+    const card =
+      document.createElement("article");
+
+    card.className =
+      "week-card search-result-card animate-in";
+
+    card.style.animationDelay =
+      `${index * 0.03}s`;
+
+
+    card.innerHTML = `
+
+      <div class="week-info">
+
+        <span class="week-number">
+          ${extractWeekNumber(resource.week)}
+        </span>
+
+        <div>
+
+          <h3>
+            ${resource.class}
+            · ${resource.subject}
+          </h3>
+
+          <p>
+            ${resource.term}
+            · ${resource.week}
+            · ${resource.topic || "Lesson resource"}
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="resource-actions">
+
+        ${
+          resource.plan
+            ? `
+              <a
+                class="download-button"
+                href="${encodeURI(resource.plan)}"
+                download
+              >
+                ↓ Plan
+              </a>
+            `
+            : ""
+        }
+
+        ${
+          resource.notes
+            ? `
+              <a
+                class="download-button notes"
+                href="${encodeURI(resource.notes)}"
+                download
+              >
+                ↓ Notes
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+
+    list.appendChild(card);
+
+  });
+
+
+  libraryView.appendChild(list);
+
+}
+
+
+/* =========================================================
+   UTILITY FUNCTIONS
+   ========================================================= */
+
+function extractWeekNumber(week) {
+
+  if (!week) return 0;
+
+  const match =
+    String(week).match(/\d+/);
+
+  return match
+    ? Number(match[0])
+    : 0;
+
+}
+
+
+function getSubjectIcon(subject) {
+
+  const icons = {
+
+    "Mathematics": "∑",
+
+    "Computing": "⌘",
+
+    "English": "Aa",
+
+    "Science": "⚗",
+
+    "Social Studies": "◎"
+
+  };
+
+
+  return icons[subject] || "✦";
+
+}
+
+
+function getTermIcon(term) {
+
+  if (term === "First Term") return "01";
+
+  if (term === "Second Term") return "02";
+
+  if (term === "Third Term") return "03";
+
+  return "✦";
+
+}
+
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   MOBILE MENU
+   ========================================================= */
+
+menuButton.addEventListener("click", () => {
+
+  mainNav.classList.toggle("open");
+
+});
+
+
+mainNav.querySelectorAll("a")
+  .forEach(link => {
+
+    link.addEventListener("click", () => {
+
+      mainNav.classList.remove("open");
+
+    });
+
+  });
+
+
+/* =========================================================
+   SEARCH EVENTS
+   ========================================================= */
+
+searchInput.addEventListener(
+  "input",
+  () => {
+
+    performSearch(
+      searchInput.value
+    );
+
+  }
+);
+
+
+clearSearch.addEventListener(
+  "click",
+  () => {
+
+    searchInput.value = "";
+
+    clearSearch.classList.remove(
+      "visible"
+    );
+
+    renderClasses();
+
+    searchInput.focus();
+
+  }
+);
+
+
+/* =========================================================
+   INITIALISE
+   ========================================================= */
+
+yearElement.textContent =
+  new Date().getFullYear();
+
+
+renderClasses();
