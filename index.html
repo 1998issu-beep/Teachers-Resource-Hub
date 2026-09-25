@@ -4,225 +4,330 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Teacher Resource Hub | Lesson Plans & Notes</title>
-  <meta name="description" content="Download lesson plans and lesson notes for Basic 1 to Basic 9.">
+  <title>Teacher Resource Hub | Ghana Teaching Resources</title>
+
+  <meta
+    name="description"
+    content="A beautifully organised collection of lesson plans and lesson notes for Ghanaian basic school teachers."
+  >
+
   <meta name="theme-color" content="#6d28d9">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet"
+  >
 
   <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-  <!-- HEADER -->
+  <!-- ================= HEADER ================= -->
+
   <header class="site-header">
+
     <div class="container header-inner">
 
-      <a href="index.html" class="logo">
-        <span class="logo-icon">TR</span>
-        <span>Teacher Resource Hub</span>
+      <a href="#" class="brand">
+        <span class="brand-mark">TR</span>
+
+        <span class="brand-text">
+          <strong>Teacher</strong>
+          <span>Resource Hub</span>
+        </span>
       </a>
 
-      <button class="menu-button" id="menuButton" aria-label="Open menu">
+      <button
+        class="menu-button"
+        id="menuButton"
+        aria-label="Open navigation"
+      >
         ☰
       </button>
 
       <nav id="mainNav">
+
         <a href="#home">Home</a>
-        <a href="#resources">Resources</a>
+
         <a href="#classes">Classes</a>
+
         <a href="#about">About</a>
+
       </nav>
 
     </div>
+
   </header>
 
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="container hero-content">
+  <!-- ================= HERO ================= -->
 
-      <div class="hero-text">
-        <span class="hero-label">TEACHER RESOURCE HUB</span>
+  <main id="home">
 
-        <h1>
-          Quality teaching resources,
-          <span>all in one place.</span>
-        </h1>
+    <section class="hero">
 
-        <p>
-          Find and download lesson plans and lesson notes for Basic 1 to Basic 9.
-          Simple, organised and made for teachers.
-        </p>
+      <div class="hero-glow hero-glow-one"></div>
+      <div class="hero-glow hero-glow-two"></div>
 
-        <a href="#resources" class="hero-button">
-          Browse Resources
-        </a>
-      </div>
+      <div class="container hero-inner">
 
-    </div>
-  </section>
+        <div class="hero-copy">
 
+          <div class="eyebrow">
+            <span class="eyebrow-dot"></span>
+            GHANA TEACHER RESOURCE HUB
+          </div>
 
-  <!-- SEARCH -->
-  <section class="search-section">
-    <div class="container">
+          <h1>
+            Teaching resources,
+            <span>beautifully organised.</span>
+          </h1>
 
-      <div class="search-box">
-        <span>⌕</span>
-        <input
-          type="search"
-          id="searchInput"
-          placeholder="Search by subject, class, topic or week..."
-        >
-      </div>
+          <p>
+            Find lesson plans and lesson notes by class, subject,
+            term and week — all in one simple resource hub.
+          </p>
 
-    </div>
-  </section>
+          <a href="#classes" class="primary-button">
+            Explore Resources
+            <span>→</span>
+          </a>
 
-
-  <!-- CLASS FILTERS -->
-  <section class="classes-section" id="classes">
-    <div class="container">
-
-      <div class="section-heading">
-        <div>
-          <span class="section-label">BROWSE BY CLASS</span>
-          <h2>Find your class</h2>
-        </div>
-      </div>
-
-      <div class="class-buttons">
-
-        <button class="class-filter active" data-class="All">
-          All
-        </button>
-
-        <button class="class-filter" data-class="Basic 1">
-          Basic 1
-        </button>
-
-        <button class="class-filter" data-class="Basic 2">
-          Basic 2
-        </button>
-
-        <button class="class-filter" data-class="Basic 3">
-          Basic 3
-        </button>
-
-        <button class="class-filter" data-class="Basic 4">
-          Basic 4
-        </button>
-
-        <button class="class-filter" data-class="Basic 5">
-          Basic 5
-        </button>
-
-        <button class="class-filter" data-class="Basic 6">
-          Basic 6
-        </button>
-
-        <button class="class-filter" data-class="Basic 7">
-          Basic 7
-        </button>
-
-        <button class="class-filter" data-class="Basic 8">
-          Basic 8
-        </button>
-
-        <button class="class-filter" data-class="Basic 9">
-          Basic 9
-        </button>
-
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- ADVERTISEMENT AREA -->
-  <div class="container">
-    <div class="ad-box">
-      <span>ADVERTISEMENT</span>
-    </div>
-  </div>
-
-
-  <!-- RESOURCES -->
-  <main class="resources-section" id="resources">
-    <div class="container">
-
-      <div class="section-heading resource-heading">
-        <div>
-          <span class="section-label">TEACHING MATERIALS</span>
-          <h2>Latest Resources</h2>
         </div>
 
-        <span id="resourceCount" class="resource-count"></span>
+        <div class="hero-visual">
+
+          <div class="floating-card card-one">
+            <span class="mini-icon">📚</span>
+            <div>
+              <strong>Lesson Plans</strong>
+              <small>Ready to download</small>
+            </div>
+          </div>
+
+          <div class="hero-center-card">
+
+            <div class="hero-book-icon">✦</div>
+
+            <span>RESOURCE LIBRARY</span>
+
+            <strong>
+              Learn.
+              <br>
+              Prepare.
+              <br>
+              Teach.
+            </strong>
+
+          </div>
+
+          <div class="floating-card card-two">
+            <span class="mini-icon">✓</span>
+            <div>
+              <strong>Lesson Notes</strong>
+              <small>Organised by week</small>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
+    </section>
 
-      <div id="resourceGrid" class="resource-grid"></div>
 
+    <!-- ================= SEARCH ================= -->
 
-      <div id="noResults" class="no-results">
-        <div class="no-results-icon">⌕</div>
-        <h3>No resources found</h3>
-        <p>
-          Try searching for another class, subject or topic.
-        </p>
+    <section class="search-section">
+
+      <div class="container">
+
+        <div class="search-panel">
+
+          <div class="search-heading">
+            <span>⌕</span>
+
+            <div>
+              <strong>Search the resource library</strong>
+              <small>Search by class, subject, term, week or topic.</small>
+            </div>
+          </div>
+
+          <div class="search-input-wrap">
+
+            <input
+              type="search"
+              id="searchInput"
+              placeholder="Try “Basic 7 Mathematics” or “Week 3”..."
+              autocomplete="off"
+            >
+
+            <button id="clearSearch" aria-label="Clear search">
+              ×
+            </button>
+
+          </div>
+
+        </div>
+
       </div>
 
-    </div>
+    </section>
+
+
+    <!-- ================= CLASSES ================= -->
+
+    <section class="classes-section" id="classes">
+
+      <div class="container">
+
+        <div class="section-intro">
+
+          <div>
+
+            <span class="section-kicker">
+              RESOURCE LIBRARY
+            </span>
+
+            <h2>
+              Choose your class
+            </h2>
+
+          </div>
+
+          <p>
+            Start with your class and move through
+            subjects, terms and weekly resources.
+          </p>
+
+        </div>
+
+
+        <div id="classGrid" class="class-grid"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= ADVERTISEMENT ================= -->
+
+    <section class="ad-section">
+
+      <div class="container">
+
+        <div class="ad-box">
+
+          <span>ADVERTISEMENT</span>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= RESOURCE NAVIGATION ================= -->
+
+    <section class="library-section">
+
+      <div class="container">
+
+        <div id="breadcrumb" class="breadcrumb"></div>
+
+        <div id="libraryView"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= ABOUT ================= -->
+
+    <section class="about-section" id="about">
+
+      <div class="container about-card">
+
+        <div class="about-mark">
+          TR
+        </div>
+
+        <div class="about-content">
+
+          <span class="section-kicker">
+            ABOUT THE HUB
+          </span>
+
+          <h2>
+            Less searching.
+            <span>More teaching.</span>
+          </h2>
+
+          <p>
+            Teacher Resource Hub is designed to make teaching
+            materials easier to find. Resources are arranged
+            logically by class, subject, term and week so that
+            teachers can get what they need without digging
+            through complicated pages.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
   </main>
 
 
-  <!-- ABOUT -->
-  <section class="about-section" id="about">
-    <div class="container about-grid">
+  <!-- ================= FOOTER ================= -->
 
-      <div>
-        <span class="section-label">ABOUT THE HUB</span>
-
-        <h2>
-          Helping teachers spend less time searching and more time teaching.
-        </h2>
-      </div>
-
-      <div>
-        <p>
-          Teacher Resource Hub is a simple platform for finding useful
-          teaching resources for Ghanaian basic schools.
-        </p>
-
-        <p>
-          Resources are organised by class, subject, term and week so that
-          teachers can quickly find what they need.
-        </p>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- FOOTER -->
   <footer class="site-footer">
-    <div class="container footer-inner">
 
-      <div>
-        <strong>Teacher Resource Hub</strong>
-        <p>Teaching resources made easier.</p>
+    <div class="container footer-top">
+
+      <div class="footer-brand">
+
+        <a href="#" class="brand">
+
+          <span class="brand-mark">TR</span>
+
+          <span class="brand-text">
+            <strong>Teacher</strong>
+            <span>Resource Hub</span>
+          </span>
+
+        </a>
+
+        <p>
+          Teaching resources, organised for teachers.
+        </p>
+
       </div>
 
       <div class="footer-links">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms</a>
+
+        <a href="#home">Home</a>
+        <a href="#classes">Classes</a>
+        <a href="#about">About</a>
+
       </div>
 
     </div>
 
-    <div class="container copyright">
-      © <span id="year"></span> Teacher Resource Hub. All rights reserved.
+    <div class="container footer-bottom">
+
+      <span>
+        © <span id="year"></span> Teacher Resource Hub.
+        All rights reserved.
+      </span>
+
     </div>
+
   </footer>
 
 
