@@ -2,100 +2,211 @@
    TEACHER RESOURCE HUB
    RESOURCE DATABASE
 
-   HOW TO ADD A RESOURCE:
+   IMPORTANT:
+   1. Upload the actual document to the GitHub repository.
+   2. Then add its exact filename below.
+   3. Use type: "scheme" for Schemes of Learning.
+   4. Use type: "lesson" for weekly lesson resources.
 
-   1. Upload the lesson plan / lesson notes to the
-      main repository.
-
-   2. Add ONE object below.
-
-   3. Make sure the filenames are EXACTLY the same
-      as the uploaded files.
-
-   Example:
+   SCHEME EXAMPLE:
 
    {
-     class: "Basic 7",
+     type: "scheme",
+     class: "Basic 8",
      subject: "Mathematics",
      term: "First Term",
-     week: "Week 4",
-     topic: "Fractions",
-     plan: "Basic7-Mathematics-Week4-Lesson-Plan.docx",
-     notes: "Basic7-Mathematics-Week4-Lesson-Notes.docx"
+     file: "Basic8-Mathematics-First-Term-Scheme-of-Learning.docx"
    }
 
-   ========================================================= */
+   LESSON EXAMPLE:
+
+   {
+     type: "lesson",
+     class: "Basic 8",
+     subject: "Mathematics",
+     term: "First Term",
+     week: "Week 1",
+     topic: "Place Value",
+     plan: "Basic8-Mathematics-Week-1-Lesson-Plan.docx",
+     notes: "Basic8-Mathematics-Week-1-Lesson-Notes.docx"
+   }
+
+   PLAN AND NOTES ARE OPTIONAL.
+   You can have only a lesson plan, only lesson notes,
+   or both.
+========================================================= */
 
 
 const resources = [
 
-  /* =======================================================
-     BASIC 7
-     ======================================================= */
+  /* =====================================================
+     SCHEMES OF LEARNING
+     ADD NEW SCHEMES HERE
+  ===================================================== */
 
 
+  /*
   {
+    type: "scheme",
     class: "Basic 7",
     subject: "Computing",
     term: "First Term",
-    week: "Week 1",
-    topic: "Introduction to Computing",
-    plan: "Basic7-Computing-Week1-Lesson-Plan.pdf",
-    notes: "Basic7-Computing-Week1-Lesson-Notes.pdf"
+    file: "Basic7-Computing-First-Term-Scheme-of-Learning.docx"
   },
+  */
+
+
+  /*
+  {
+    type: "scheme",
+    class: "Basic 8",
+    subject: "Computing",
+    term: "First Term",
+    file: "Basic8-Computing-First-Term-Scheme-of-Learning.docx"
+  },
+  */
+
+
+  /*
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "Computing",
+    term: "First Term",
+    file: "Basic9-Computing-First-Term-Scheme-of-Learning.docx"
+  },
+  */
+
+
+  /* =====================================================
+     TEST RESOURCES CURRENTLY IN YOUR REPOSITORY
+  ===================================================== */
 
 
   {
+    type: "lesson",
+
     class: "Basic 7",
     subject: "Computing",
     term: "First Term",
-    week: "Week 2",
-    topic: "Computer Hardware",
-    plan: "Basic7-Computing-Week2-Lesson-Plan.pdf",
-    notes: "Basic7-Computing-Week2-Lesson-Notes.pdf"
-  },
 
-
-  /* =======================================================
-     BASIC 8
-     ======================================================= */
-
-
-  {
-    class: "Basic 8",
-    subject: "Computing",
-    term: "First Term",
     week: "Week 1",
-    topic: "Computer Networks",
-    plan: "Basic8-Computing-Week1-Lesson-Plan.pdf",
-    notes: "Basic8-Computing-Week1-Lesson-Notes.pdf"
-  },
 
-
-  {
-    class: "Basic 8",
-    subject: "Mathematics",
-    term: "First Term",
-    week: "Week 3",
     topic: "Comparing and Rounding — Test Resource",
-    plan: "Basic7_Comparing_Rounding_Lesson_Plan-1.docx",
+
+    plan: "Basic7_Comparing_Rounding_Lesson_Plan-1.docx"
+  },
+
+
+  {
+    type: "lesson",
+
+    class: "Basic 8",
+    subject: "Computing",
+    term: "First Term",
+
+    week: "Week 3",
+
+    topic: "Computing — Week 3 Test Resource",
+
     notes: "Basic_8_Week_3_Lesson_Notes.docx"
   },
 
 
-  /* =======================================================
-     BASIC 9
-     ======================================================= */
+  /* =====================================================
+     ADD YOUR REAL RESOURCES BELOW THIS LINE
+  ===================================================== */
 
+
+  /*
+  ---------------------------------------------------------
+  EXAMPLE: SCHEME
+  ---------------------------------------------------------
 
   {
-    class: "Basic 9",
-    subject: "Computing",
+    type: "scheme",
+    class: "Basic 8",
+    subject: "Mathematics",
     term: "First Term",
+    file: "Basic8-Mathematics-First-Term-Scheme.docx"
+  },
+
+
+  ---------------------------------------------------------
+  EXAMPLE: WEEK 1
+  ---------------------------------------------------------
+
+  {
+    type: "lesson",
+    class: "Basic 8",
+    subject: "Mathematics",
+    term: "First Term",
+
     week: "Week 1",
-    topic: "Information and Communication Technology",
-    plan: "Basic9-Computing-Week1-Lesson-Plan.pdf",
-    notes: "Basic9-Computing-Week1-Lesson-Notes.pdf"
+
+    topic: "Whole Numbers",
+
+    plan: "Basic8-Mathematics-Week-1-Lesson-Plan.docx",
+
+    notes: "Basic8-Mathematics-Week-1-Lesson-Notes.docx"
+  },
+
+
+  ---------------------------------------------------------
+  EXAMPLE: WEEK 2
+  ---------------------------------------------------------
+
+  {
+    type: "lesson",
+    class: "Basic 8",
+    subject: "Mathematics",
+    term: "First Term",
+
+    week: "Week 2",
+
+    topic: "Fractions",
+
+    plan: "Basic8-Mathematics-Week-2-Lesson-Plan.docx",
+
+    notes: "Basic8-Mathematics-Week-2-Lesson-Notes.docx"
+  },
+
+
+  ---------------------------------------------------------
+  EXAMPLE: ONLY LESSON PLAN
+  ---------------------------------------------------------
+
+  {
+    type: "lesson",
+    class: "Basic 8",
+    subject: "Science",
+    term: "First Term",
+
+    week: "Week 1",
+
+    topic: "Introduction to Matter",
+
+    plan: "Basic8-Science-Week-1-Lesson-Plan.docx"
+  },
+
+
+  ---------------------------------------------------------
+  EXAMPLE: ONLY LESSON NOTES
+  ---------------------------------------------------------
+
+  {
+    type: "lesson",
+    class: "Basic 8",
+    subject: "English",
+    term: "First Term",
+
+    week: "Week 1",
+
+    topic: "Reading Comprehension",
+
+    notes: "Basic8-English-Week-1-Lesson-Notes.docx"
   }
+
+  */
 
 ];
