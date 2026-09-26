@@ -1,48 +1,14 @@
 /* =========================================================
    TEACHER RESOURCE HUB
-   Navigation Engine
-   Class → Subject → Term → Week → Downloads
-   ========================================================= */
-
-const classGrid = document.getElementById("classGrid");
-const libraryView = document.getElementById("libraryView");
-const breadcrumb = document.getElementById("breadcrumb");
-
-const searchInput = document.getElementById("searchInput");
-const clearSearch = document.getElementById("clearSearch");
-
-const menuButton = document.getElementById("menuButton");
-const mainNav = document.getElementById("mainNav");
-
-const yearElement = document.getElementById("year");
+   Main website functionality
+========================================================= */
 
 
-/* =========================================================
-   CONFIGURATION
-   ========================================================= */
+/* =========================
+   BASIC CONFIGURATION
+========================= */
 
-const JHS_SUBJECTS = [
-  "Mathematics",
-  "Computing",
-  "English",
-  "Science",
-  "Social Studies"
-];
-
-const PRIMARY_SUBJECTS = [
-  "Mathematics",
-  "English",
-  "Science",
-  "Social Studies"
-];
-
-const TERMS = [
-  "First Term",
-  "Second Term",
-  "Third Term"
-];
-
-const CLASSES = [
+const classes = [
   "Basic 1",
   "Basic 2",
   "Basic 3",
@@ -54,1064 +20,862 @@ const CLASSES = [
   "Basic 9"
 ];
 
+const primarySubjects = [
+  "Mathematics",
+  "English",
+  "Science",
+  "Social Studies"
+];
 
-/* =========================================================
-   NAVIGATION STATE
-   ========================================================= */
+const jhsSubjects = [
+  "Mathematics",
+  "Computing",
+  "English",
+  "Science",
+  "Social Studies"
+];
+
+
+/* =========================
+   APP STATE
+========================= */
 
 let currentClass = null;
 let currentSubject = null;
 let currentTerm = null;
 
 
-/* =========================================================
+/* =========================
+   DOM
+========================= */
+
+const library = document.getElementById("library");
+const breadcrumb = document.getElementById("breadcrumb");
+const libraryDescription = document.getElementById("libraryDescription");
+const searchInput = document.getElementById("searchInput");
+
+
+/* =========================
    HELPERS
-   ========================================================= */
+========================= */
 
 function getSubjectsForClass(className) {
+  const classNumber = parseInt(className.replace("Basic ", ""), 10);
 
-  const classNumber = Number(
-    className.replace("Basic ", "")
-  );
-
-  return classNumber >= 7
-    ? JHS_SUBJECTS
-    : PRIMARY_SUBJECTS;
+  return classNumber <= 6
+    ? primarySubjects
+    : jhsSubjects;
 }
 
 
-function getClassNumber(className) {
-
-  return Number(
-    className.replace("Basic ", "")
-  );
-
+function isScheme(resource) {
+  return resource.type === "scheme";
 }
 
 
-function resourceExistsForClass(className) {
-
-  return resources.some(
-    item => item.class === className
-  );
-
+function isLesson(resource) {
+  return resource.type === "lesson" || !resource.type;
 }
 
 
-function getSubjectResources(className, subject) {
+function getFileUrl(filename) {
+  if (!filename) return "#";
 
-  return resources.filter(
-    item =>
-      item.class === className &&
-      item.subject === subject
-  );
-
-}
-
-
-function getTermResources(className, subject, term) {
-
-  return resources.filter(
-    item =>
-      item.class === className &&
-      item.subject === subject &&
-      item.term === term
-  );
-
-}
-
-
-function getAvailableSubjects(className) {
-
-  const allowedSubjects =
-    getSubjectsForClass(className);
-
-  return allowedSubjects.filter(subject =>
-    resources.some(
-      item =>
-        item.class === className &&
-        item.subject === subject
-    )
-  );
-
-}
-
-
-function getAvailableTerms(className, subject) {
-
-  return TERMS.filter(term =>
-    resources.some(
-      item =>
-        item.class === className &&
-        item.subject === subject &&
-        item.term === term
-    )
-  );
-
-}
-
-
-function scrollToLibrary() {
-
-  document.querySelector(".library-section")
-    .scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-}
-
-
-/* =========================================================
-   BREADCRUMBS
-   ========================================================= */
-
-function renderBreadcrumb() {
-
-  if (!currentClass) {
-
-    breadcrumb.innerHTML = "";
-
-    return;
-
-  }
-
-
-  let html = `
-    <button data-level="classes">
-      Classes
-    </button>
-  `;
-
-
-  if (currentClass) {
-
-    html += `
-      <span class="separator">/</span>
-
-      <button data-level="subjects">
-        ${currentClass}
-      </button>
-    `;
-
-  }
-
-
-  if (currentSubject) {
-
-    html += `
-      <span class="separator">/</span>
-
-      <button data-level="terms">
-        ${currentSubject}
-      </button>
-    `;
-
-  }
-
-
-  if (currentTerm) {
-
-    html += `
-      <span class="separator">/</span>
-
-      <span>${currentTerm}</span>
-    `;
-
-  }
-
-
-  breadcrumb.innerHTML = html;
-
-
-  breadcrumb
-    .querySelectorAll("button")
-    .forEach(button => {
-
-      button.addEventListener("click", () => {
-
-        const level =
-          button.dataset.level;
-
-        if (level === "classes") {
-
-          currentClass = null;
-          currentSubject = null;
-          currentTerm = null;
-
-          renderClasses();
-
-          document
-            .querySelector("#classes")
-            .scrollIntoView({
-              behavior: "smooth"
-            });
-
-        }
-
-
-        if (level === "subjects") {
-
-          currentSubject = null;
-          currentTerm = null;
-
-          renderSubjects();
-
-          scrollToLibrary();
-
-        }
-
-
-        if (level === "terms") {
-
-          currentTerm = null;
-
-          renderTerms();
-
-          scrollToLibrary();
-
-        }
-
-      });
-
-    });
-
-}
-
-
-/* =========================================================
-   CLASS VIEW
-   ========================================================= */
-
-function renderClasses() {
-
-  classGrid.innerHTML = "";
-
-  CLASSES.forEach((className, index) => {
-
-    const available =
-      resourceExistsForClass(className);
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "class-card animate-in";
-
-    card.style.animationDelay =
-      `${index * 0.04}s`;
-
-    card.innerHTML = `
-
-      <span class="class-number">
-        ${getClassNumber(className)}
-      </span>
-
-      <span class="class-arrow">→</span>
-
-      <h3>${className}</h3>
-
-      <p>
-        ${available
-          ? "Explore available teaching resources"
-          : "Resources coming soon"
-        }
-      </p>
-
-    `;
-
-
-    card.addEventListener("click", () => {
-
-      currentClass = className;
-      currentSubject = null;
-      currentTerm = null;
-
-      renderSubjects();
-
-      scrollToLibrary();
-
-    });
-
-
-    classGrid.appendChild(card);
-
-  });
-
-
-  libraryView.innerHTML = "";
-
-  renderBreadcrumb();
-
-}
-
-
-/* =========================================================
-   SUBJECT VIEW
-   ========================================================= */
-
-function renderSubjects() {
-
-  classGrid.innerHTML = "";
-
-  const subjects =
-    getAvailableSubjects(currentClass);
-
-
-  const heading = document.createElement("div");
-
-  heading.className =
-    "library-header animate-in";
-
-  heading.innerHTML = `
-
-    <div>
-
-      <span class="section-kicker">
-        ${currentClass}
-      </span>
-
-      <h2>Choose a subject</h2>
-
-    </div>
-
-    <p>
-      Select a subject to explore its
-      first, second and third term resources.
-    </p>
-
-  `;
-
-
-  libraryView.innerHTML = "";
-
-  libraryView.appendChild(heading);
-
-
-  if (!subjects.length) {
-
-    libraryView.appendChild(
-      createEmptyState(
-        "No resources yet",
-        `There are currently no uploaded resources for ${currentClass}.`
-      )
-    );
-
-    renderBreadcrumb();
-
-    return;
-
-  }
-
-
-  const grid =
-    document.createElement("div");
-
-  grid.className =
-    "navigation-grid";
-
-
-  subjects.forEach((subject, index) => {
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "navigation-card animate-in";
-
-    card.style.animationDelay =
-      `${index * 0.05}s`;
-
-
-    const icon =
-      getSubjectIcon(subject);
-
-
-    const count =
-      getSubjectResources(
-        currentClass,
-        subject
-      ).length;
-
-
-    card.innerHTML = `
-
-      <div class="navigation-icon">
-        ${icon}
-      </div>
-
-      <span class="navigation-arrow">→</span>
-
-      <h3>${subject}</h3>
-
-      <p>
-        ${count} resource${count === 1 ? "" : "s"} available
-      </p>
-
-    `;
-
-
-    card.addEventListener("click", () => {
-
-      currentSubject = subject;
-      currentTerm = null;
-
-      renderTerms();
-
-      scrollToLibrary();
-
-    });
-
-
-    grid.appendChild(card);
-
-  });
-
-
-  libraryView.appendChild(grid);
-
-  renderBreadcrumb();
-
-}
-
-
-/* =========================================================
-   TERM VIEW
-   ========================================================= */
-
-function renderTerms() {
-
-  libraryView.innerHTML = "";
-
-
-  const heading =
-    document.createElement("div");
-
-  heading.className =
-    "library-header animate-in";
-
-  heading.innerHTML = `
-
-    <div>
-
-      <span class="section-kicker">
-        ${currentClass} · ${currentSubject}
-      </span>
-
-      <h2>Choose a term</h2>
-
-    </div>
-
-    <p>
-      Select a term to see the lesson plans
-      and lesson notes organised by week.
-    </p>
-
-  `;
-
-
-  libraryView.appendChild(heading);
-
-
-  const terms =
-    getAvailableTerms(
-      currentClass,
-      currentSubject
-    );
-
-
-  if (!terms.length) {
-
-    libraryView.appendChild(
-      createEmptyState(
-        "No terms available",
-        "Resources for this subject have not been uploaded yet."
-      )
-    );
-
-    renderBreadcrumb();
-
-    return;
-
-  }
-
-
-  const grid =
-    document.createElement("div");
-
-  grid.className =
-    "navigation-grid";
-
-
-  terms.forEach((term, index) => {
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "navigation-card animate-in";
-
-    card.style.animationDelay =
-      `${index * 0.06}s`;
-
-
-    const count =
-      getTermResources(
-        currentClass,
-        currentSubject,
-        term
-      ).length;
-
-
-    card.innerHTML = `
-
-      <div class="navigation-icon">
-        ${getTermIcon(term)}
-      </div>
-
-      <span class="navigation-arrow">→</span>
-
-      <h3>${term}</h3>
-
-      <p>
-        ${count} weekly resource${count === 1 ? "" : "s"}
-      </p>
-
-    `;
-
-
-    card.addEventListener("click", () => {
-
-      currentTerm = term;
-
-      renderWeeks();
-
-      scrollToLibrary();
-
-    });
-
-
-    grid.appendChild(card);
-
-  });
-
-
-  libraryView.appendChild(grid);
-
-  renderBreadcrumb();
-
-}
-
-
-/* =========================================================
-   WEEK VIEW
-   ========================================================= */
-
-function renderWeeks() {
-
-  libraryView.innerHTML = "";
-
-
-  const heading =
-    document.createElement("div");
-
-  heading.className =
-    "library-header animate-in";
-
-  heading.innerHTML = `
-
-    <div>
-
-      <span class="section-kicker">
-        ${currentClass} · ${currentSubject}
-      </span>
-
-      <h2>${currentTerm}</h2>
-
-    </div>
-
-    <p>
-      Choose a week to download the available
-      lesson plan and lesson notes.
-    </p>
-
-  `;
-
-
-  libraryView.appendChild(heading);
-
-
-  const termResources =
-    getTermResources(
-      currentClass,
-      currentSubject,
-      currentTerm
-    );
-
-
-  const sorted =
-    [...termResources].sort(
-      (a, b) =>
-        extractWeekNumber(a.week) -
-        extractWeekNumber(b.week)
-    );
-
-
-  if (!sorted.length) {
-
-    libraryView.appendChild(
-      createEmptyState(
-        "No weekly resources",
-        "There are currently no lesson materials uploaded for this term."
-      )
-    );
-
-    renderBreadcrumb();
-
-    return;
-
-  }
-
-
-  const list =
-    document.createElement("div");
-
-  list.className =
-    "week-list";
-
-
-  sorted.forEach((resource, index) => {
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "week-card animate-in";
-
-    card.style.animationDelay =
-      `${index * 0.04}s`;
-
-
-    const topic =
-      resource.topic ||
-      "Lesson resources";
-
-
-    card.innerHTML = `
-
-      <div class="week-info">
-
-        <span class="week-number">
-          ${extractWeekNumber(resource.week)}
-        </span>
-
-        <div>
-
-          <h3>
-            ${resource.week}
-          </h3>
-
-          <p>
-            ${topic}
-          </p>
-
-        </div>
-
-      </div>
-
-      <div class="resource-actions">
-
-        ${
-          resource.plan
-            ? `
-              <a
-                class="download-button"
-                href="${encodeURI(resource.plan)}"
-                download
-              >
-                ↓ Lesson Plan
-              </a>
-            `
-            : ""
-        }
-
-        ${
-          resource.notes
-            ? `
-              <a
-                class="download-button notes"
-                href="${encodeURI(resource.notes)}"
-                download
-              >
-                ↓ Lesson Notes
-              </a>
-            `
-            : ""
-        }
-
-      </div>
-
-    `;
-
-
-    list.appendChild(card);
-
-  });
-
-
-  libraryView.appendChild(list);
-
-  renderBreadcrumb();
-
-}
-
-
-/* =========================================================
-   EMPTY STATE
-   ========================================================= */
-
-function createEmptyState(title, message) {
-
-  const state =
-    document.createElement("div");
-
-  state.className =
-    "empty-state animate-in";
-
-
-  state.innerHTML = `
-
-    <div class="empty-icon">
-      ✦
-    </div>
-
-    <h3>${title}</h3>
-
-    <p>${message}</p>
-
-  `;
-
-
-  return state;
-
-}
-
-
-/* =========================================================
-   SEARCH
-   ========================================================= */
-
-function performSearch(query) {
-
-  const value =
-    query.trim().toLowerCase();
-
-
-  clearSearch.classList.toggle(
-    "visible",
-    value.length > 0
-  );
-
-
-  if (!value) {
-
-    renderClasses();
-
-    return;
-
-  }
-
-
-  classGrid.innerHTML = "";
-
-  libraryView.innerHTML = "";
-
-  breadcrumb.innerHTML = "";
-
-
-  const results =
-    resources.filter(resource => {
-
-      const searchable = [
-
-        resource.class,
-        resource.subject,
-        resource.term,
-        resource.week,
-        resource.topic
-
-      ]
-        .join(" ")
-        .toLowerCase();
-
-
-      return searchable.includes(value);
-
-    });
-
-
-  const heading =
-    document.createElement("div");
-
-  heading.className =
-    "library-header animate-in";
-
-  heading.innerHTML = `
-
-    <div>
-
-      <span class="section-kicker">
-        SEARCH RESULTS
-      </span>
-
-      <h2>
-        ${results.length} result${results.length === 1 ? "" : "s"}
-      </h2>
-
-    </div>
-
-    <p>
-      Showing resources matching
-      “${escapeHTML(query)}”.
-    </p>
-
-  `;
-
-
-  libraryView.appendChild(heading);
-
-
-  if (!results.length) {
-
-    libraryView.appendChild(
-      createEmptyState(
-        "Nothing found",
-        "Try searching for another class, subject, term, week or topic."
-      )
-    );
-
-    return;
-
-  }
-
-
-  const list =
-    document.createElement("div");
-
-  list.className =
-    "week-list";
-
-
-  results.forEach((resource, index) => {
-
-    const card =
-      document.createElement("article");
-
-    card.className =
-      "week-card search-result-card animate-in";
-
-    card.style.animationDelay =
-      `${index * 0.03}s`;
-
-
-    card.innerHTML = `
-
-      <div class="week-info">
-
-        <span class="week-number">
-          ${extractWeekNumber(resource.week)}
-        </span>
-
-        <div>
-
-          <h3>
-            ${resource.class}
-            · ${resource.subject}
-          </h3>
-
-          <p>
-            ${resource.term}
-            · ${resource.week}
-            · ${resource.topic || "Lesson resource"}
-          </p>
-
-        </div>
-
-      </div>
-
-      <div class="resource-actions">
-
-        ${
-          resource.plan
-            ? `
-              <a
-                class="download-button"
-                href="${encodeURI(resource.plan)}"
-                download
-              >
-                ↓ Plan
-              </a>
-            `
-            : ""
-        }
-
-        ${
-          resource.notes
-            ? `
-              <a
-                class="download-button notes"
-                href="${encodeURI(resource.notes)}"
-                download
-              >
-                ↓ Notes
-              </a>
-            `
-            : ""
-        }
-
-      </div>
-
-    `;
-
-
-    list.appendChild(card);
-
-  });
-
-
-  libraryView.appendChild(list);
-
-}
-
-
-/* =========================================================
-   UTILITY FUNCTIONS
-   ========================================================= */
-
-function extractWeekNumber(week) {
-
-  if (!week) return 0;
-
-  const match =
-    String(week).match(/\d+/);
-
-  return match
-    ? Number(match[0])
-    : 0;
-
-}
-
-
-function getSubjectIcon(subject) {
-
-  const icons = {
-
-    "Mathematics": "∑",
-
-    "Computing": "⌘",
-
-    "English": "Aa",
-
-    "Science": "⚗",
-
-    "Social Studies": "◎"
-
-  };
-
-
-  return icons[subject] || "✦";
-
-}
-
-
-function getTermIcon(term) {
-
-  if (term === "First Term") return "01";
-
-  if (term === "Second Term") return "02";
-
-  if (term === "Third Term") return "03";
-
-  return "✦";
-
+  return encodeURI(filename);
 }
 
 
 function escapeHTML(value) {
+  if (value === undefined || value === null) {
+    return "";
+  }
 
   return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+function getClassNumber(className) {
+  return parseInt(className.replace("Basic ", ""), 10);
+}
+
+
+/* =========================
+   HOME
+========================= */
+
+function goHome() {
+
+  currentClass = null;
+  currentSubject = null;
+  currentTerm = null;
+
+  renderClasses();
+
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   BREADCRUMB
+========================= */
+
+function renderBreadcrumb() {
+
+  let html = `
+    <button onclick="goHome()">Classes</button>
+  `;
+
+  if (currentClass) {
+
+    html += `
+      <span class="crumb-separator">›</span>
+      <button onclick="selectClass('${escapeHTML(currentClass)}')">
+        ${escapeHTML(currentClass)}
+      </button>
+    `;
+  }
+
+  if (currentSubject) {
+
+    html += `
+      <span class="crumb-separator">›</span>
+      <button onclick="selectSubject('${escapeHTML(currentSubject)}')">
+        ${escapeHTML(currentSubject)}
+      </button>
+    `;
+  }
+
+  if (currentTerm) {
+
+    html += `
+      <span class="crumb-separator">›</span>
+      <span class="current">
+        ${escapeHTML(currentTerm)}
+      </span>
+    `;
+  }
+
+  breadcrumb.innerHTML = html;
+}
+
+
+/* =========================
+   CLASS VIEW
+========================= */
+
+function renderClasses() {
+
+  renderBreadcrumb();
+
+  libraryDescription.textContent =
+    "Choose a class to begin exploring available teaching resources.";
+
+  let html = `<div class="class-grid">`;
+
+  classes.forEach((className, index) => {
+
+    const count = resources.filter(
+      resource => resource.class === className
+    ).length;
+
+    html += `
+      <article
+        class="class-card"
+        onclick="selectClass('${className}')"
+      >
+
+        <div class="class-number">
+          BASIC ${String(index + 1).padStart(2, "0")}
+        </div>
+
+        <h3>${className}</h3>
+
+        <p>
+          ${
+            count > 0
+              ? `${count} resource${count === 1 ? "" : "s"} available`
+              : "Resources coming soon"
+          }
+        </p>
+
+        <div class="class-arrow">→</div>
+
+      </article>
+    `;
+  });
+
+  html += `</div>`;
+
+  library.innerHTML = html;
+}
+
+
+/* =========================
+   SELECT CLASS
+========================= */
+
+function selectClass(className) {
+
+  currentClass = className;
+  currentSubject = null;
+  currentTerm = null;
+
+  renderSubjects();
+
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   SUBJECT VIEW
+========================= */
+
+function renderSubjects() {
+
+  renderBreadcrumb();
+
+  libraryDescription.textContent =
+    `Choose a subject for ${currentClass}.`;
+
+  const subjects = getSubjectsForClass(currentClass);
+
+  let html = `<div class="subject-grid">`;
+
+  subjects.forEach(subject => {
+
+    const count = resources.filter(
+      resource =>
+        resource.class === currentClass &&
+        resource.subject === subject
+    ).length;
+
+    html += `
+      <article
+        class="subject-card"
+        onclick="selectSubject('${subject}')"
+      >
+
+        <div>
+          <h3>${subject}</h3>
+
+          <p>
+            ${
+              count > 0
+                ? `${count} resource${count === 1 ? "" : "s"}`
+                : "No resources yet"
+            }
+          </p>
+        </div>
+
+        <div class="subject-icon">→</div>
+
+      </article>
+    `;
+  });
+
+  html += `</div>`;
+
+  library.innerHTML = html;
+}
+
+
+/* =========================
+   SELECT SUBJECT
+========================= */
+
+function selectSubject(subject) {
+
+  currentSubject = subject;
+  currentTerm = null;
+
+  renderTerms();
+
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   TERM VIEW
+========================= */
+
+function renderTerms() {
+
+  renderBreadcrumb();
+
+  libraryDescription.textContent =
+    `${currentSubject} resources for ${currentClass}.`;
+
+  const termNames = [
+    "First Term",
+    "Second Term",
+    "Third Term"
+  ];
+
+  let html = `<div class="term-grid">`;
+
+  termNames.forEach(term => {
+
+    const termResources = resources.filter(
+      resource =>
+        resource.class === currentClass &&
+        resource.subject === currentSubject &&
+        resource.term === term
+    );
+
+    const schemeExists = termResources.some(isScheme);
+
+    const lessonCount = termResources.filter(isLesson).length;
+
+    /*
+      We show all three terms so the website remains ready
+      for future uploads.
+    */
+
+    html += `
+      <article
+        class="term-card"
+        onclick="selectTerm('${term}')"
+      >
+
+        <h3>${term}</h3>
+
+        <p>
+          Explore schemes and weekly lesson resources.
+        </p>
+
+        <div class="term-meta">
+
+          ${
+            schemeExists
+              ? `<span class="meta-badge scheme-badge">
+                   Scheme available
+                 </span>`
+              : ""
+          }
+
+          ${
+            lessonCount > 0
+              ? `<span class="meta-badge">
+                   ${lessonCount} lesson resource${lessonCount === 1 ? "" : "s"}
+                 </span>`
+              : ""
+          }
+
+          ${
+            !schemeExists && lessonCount === 0
+              ? `<span class="meta-badge">
+                   Coming soon
+                 </span>`
+              : ""
+          }
+
+        </div>
+
+      </article>
+    `;
+  });
+
+  html += `</div>`;
+
+  library.innerHTML = html;
+}
+
+
+/* =========================
+   SELECT TERM
+========================= */
+
+function selectTerm(term) {
+
+  currentTerm = term;
+
+  renderTermResources();
+
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   TERM RESOURCE PAGE
+========================= */
+
+function renderTermResources() {
+
+  renderBreadcrumb();
+
+  libraryDescription.textContent =
+    `${currentClass} · ${currentSubject} · ${currentTerm}`;
+
+  const termResources = resources.filter(
+    resource =>
+      resource.class === currentClass &&
+      resource.subject === currentSubject &&
+      resource.term === currentTerm
+  );
+
+  const schemes = termResources.filter(isScheme);
+  const lessons = termResources.filter(isLesson);
+
+  let html = "";
+
+
+  /* =========================
+     SCHEME
+  ========================= */
+
+  if (schemes.length > 0) {
+
+    schemes.forEach(scheme => {
+
+      if (!scheme.file) return;
+
+      html += `
+        <div class="scheme-panel">
+
+          <div class="scheme-icon">
+            📘
+          </div>
+
+          <div class="scheme-content">
+
+            <h3>Scheme of Learning</h3>
+
+            <p>
+              ${escapeHTML(
+                scheme.title ||
+                `${currentClass} ${currentSubject} ${currentTerm} Scheme of Learning`
+              )}
+            </p>
+
+          </div>
+
+          <a
+            class="download-button"
+            href="${getFileUrl(scheme.file)}"
+            download
+          >
+            ↓ Download Scheme
+          </a>
+
+        </div>
+      `;
+    });
+  }
+
+
+  /* =========================
+     WEEKLY LESSON RESOURCES
+  ========================= */
+
+  html += `
+    <div class="resource-heading">
+
+      <h3>Weekly Lesson Resources</h3>
+
+      <p>
+        Lesson plans and lesson notes organised by week.
+      </p>
+
+    </div>
+  `;
+
+
+  if (lessons.length === 0) {
+
+    html += `
+      <div class="empty-state">
+
+        <div class="empty-state-icon">📚</div>
+
+        <h3>No weekly resources yet</h3>
+
+        <p>
+          Lesson plans and lesson notes for this term
+          will appear here when they are uploaded.
+        </p>
+
+      </div>
+    `;
+
+  } else {
+
+    lessons.sort(compareWeeks);
+
+    html += `<div class="week-list">`;
+
+    lessons.forEach(resource => {
+
+      const week = resource.week || "Resource";
+
+      const weekNumber = extractWeekNumber(week);
+
+      html += `
+        <article class="week-card">
+
+          <div class="week-number">
+            ${weekNumber ? `WEEK ${weekNumber}` : "FILE"}
+          </div>
+
+          <div class="week-info">
+
+            <h4>
+              ${escapeHTML(
+                resource.topic || "Teaching Resource"
+              )}
+            </h4>
+
+            <p>
+              ${escapeHTML(week)}
+            </p>
+
+          </div>
+
+          <div class="resource-buttons">
+
+            ${
+              resource.plan
+                ? `
+                  <a
+                    class="download-button secondary"
+                    href="${getFileUrl(resource.plan)}"
+                    download
+                  >
+                    Lesson Plan
+                  </a>
+                `
+                : ""
+            }
+
+            ${
+              resource.notes
+                ? `
+                  <a
+                    class="download-button"
+                    href="${getFileUrl(resource.notes)}"
+                    download
+                  >
+                    Lesson Notes
+                  </a>
+                `
+                : ""
+            }
+
+          </div>
+
+        </article>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  library.innerHTML = html;
+}
+
+
+/* =========================
+   WEEK SORTING
+========================= */
+
+function extractWeekNumber(week) {
+
+  if (!week) return null;
+
+  const match = String(week).match(/\d+/);
+
+  return match ? parseInt(match[0], 10) : null;
+}
+
+
+function compareWeeks(a, b) {
+
+  const aNumber = extractWeekNumber(a.week);
+  const bNumber = extractWeekNumber(b.week);
+
+  if (aNumber === null && bNumber === null) {
+    return String(a.week || "").localeCompare(
+      String(b.week || "")
+    );
+  }
+
+  if (aNumber === null) return 1;
+  if (bNumber === null) return -1;
+
+  return aNumber - bNumber;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+function performSearch() {
+
+  const query = searchInput.value.trim().toLowerCase();
+
+  if (!query) {
+
+    goHome();
+    return;
+  }
+
+  const results = resources.filter(resource => {
+
+    const searchableText = [
+      resource.class,
+      resource.subject,
+      resource.term,
+      resource.week,
+      resource.topic,
+      resource.title,
+      resource.file,
+      resource.plan,
+      resource.notes
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return searchableText.includes(query);
+  });
+
+  renderSearchResults(results);
+
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
+  });
+}
+
+
+/* =========================
+   SEARCH RESULTS
+========================= */
+
+function renderSearchResults(results) {
+
+  currentClass = null;
+  currentSubject = null;
+  currentTerm = null;
+
+  breadcrumb.innerHTML = `
+    <button onclick="goHome()">Classes</button>
+    <span class="crumb-separator">›</span>
+    <span class="current">Search results</span>
+  `;
+
+  libraryDescription.textContent =
+    `Showing ${results.length} matching resource${results.length === 1 ? "" : "s"}.`;
+
+
+  if (results.length === 0) {
+
+    library.innerHTML = `
+      <div class="empty-state">
+
+        <div class="empty-state-icon">🔎</div>
+
+        <h3>No resources found</h3>
+
+        <p>
+          Try searching for a class, subject, term, week,
+          topic or resource name.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  let html = `<div class="search-results">`;
+
+  results.forEach(resource => {
+
+    if (isScheme(resource)) {
+
+      html += `
+        <article class="search-result">
+
+          <div class="result-icon">
+            📘
+          </div>
+
+          <div class="result-content">
+
+            <h3>
+              ${escapeHTML(
+                resource.title ||
+                `${resource.class} ${resource.subject} Scheme of Learning`
+              )}
+            </h3>
+
+            <p>
+              ${escapeHTML(resource.class)}
+              ·
+              ${escapeHTML(resource.subject)}
+              ·
+              ${escapeHTML(resource.term)}
+            </p>
+
+          </div>
+
+          <a
+            class="download-button"
+            href="${getFileUrl(resource.file)}"
+            download
+          >
+            Download Scheme
+          </a>
+
+        </article>
+      `;
+
+    } else {
+
+      html += `
+        <article class="search-result">
+
+          <div class="result-icon">
+            📚
+          </div>
+
+          <div class="result-content">
+
+            <h3>
+              ${escapeHTML(
+                resource.topic || "Teaching Resource"
+              )}
+            </h3>
+
+            <p>
+              ${escapeHTML(resource.class)}
+              ·
+              ${escapeHTML(resource.subject)}
+              ·
+              ${escapeHTML(resource.term)}
+              ·
+              ${escapeHTML(resource.week || "")}
+            </p>
+
+          </div>
+
+          <div class="resource-buttons">
+
+            ${
+              resource.plan
+                ? `
+                  <a
+                    class="download-button secondary"
+                    href="${getFileUrl(resource.plan)}"
+                    download
+                  >
+                    Plan
+                  </a>
+                `
+                : ""
+            }
+
+            ${
+              resource.notes
+                ? `
+                  <a
+                    class="download-button"
+                    href="${getFileUrl(resource.notes)}"
+                    download
+                  >
+                    Notes
+                  </a>
+                `
+                : ""
+            }
+
+          </div>
+
+        </article>
+      `;
+    }
+  });
+
+  html += `</div>`;
+
+  library.innerHTML = html;
+}
+
+
+/* =========================
+   SEARCH ENTER KEY
+========================= */
+
+if (searchInput) {
+
+  searchInput.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+      performSearch();
+    }
+
+  });
+}
+
+
+/* =========================
+   MOBILE MENU
+========================= */
+
+const menuToggle = document.getElementById("menuToggle");
+const mobileNav = document.getElementById("mobileNav");
+
+if (menuToggle) {
+
+  menuToggle.addEventListener("click", function() {
+    mobileNav.classList.toggle("active");
+  });
 
 }
 
 
-/* =========================================================
-   MOBILE MENU
-   ========================================================= */
+function closeMobileMenu() {
 
-menuButton.addEventListener("click", () => {
+  if (mobileNav) {
+    mobileNav.classList.remove("active");
+  }
 
-  mainNav.classList.toggle("open");
-
-});
+}
 
 
-mainNav.querySelectorAll("a")
-  .forEach(link => {
+/* =========================
+   SCROLL TO LIBRARY
+========================= */
 
-    link.addEventListener("click", () => {
+function scrollToLibrary() {
 
-      mainNav.classList.remove("open");
-
-    });
-
+  document.getElementById("resources").scrollIntoView({
+    behavior: "smooth"
   });
 
-
-/* =========================================================
-   SEARCH EVENTS
-   ========================================================= */
-
-searchInput.addEventListener(
-  "input",
-  () => {
-
-    performSearch(
-      searchInput.value
-    );
-
-  }
-);
+}
 
 
-clearSearch.addEventListener(
-  "click",
-  () => {
+/* =========================
+   INITIAL LOAD
+========================= */
 
-    searchInput.value = "";
+document.addEventListener("DOMContentLoaded", function() {
 
-    clearSearch.classList.remove(
-      "visible"
-    );
+  renderClasses();
 
-    renderClasses();
-
-    searchInput.focus();
-
-  }
-);
-
-
-/* =========================================================
-   INITIALISE
-   ========================================================= */
-
-yearElement.textContent =
-  new Date().getFullYear();
-
-
-renderClasses();
+});
