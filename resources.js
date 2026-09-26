@@ -99,6 +99,53 @@ const resources = [
     file: "BS8_Social_Studies_Term1_Scheme.docx"
   },
 
+    // ==================== BASIC 9 ====================
+
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "Computing",
+    term: "First Term",
+    title: "Basic 9 Computing — First Term Scheme of Learning",
+    file: "BS9_Computing_Term1_Scheme.docx"
+  },
+
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "English",
+    term: "First Term",
+    title: "Basic 9 English Language — First Term Scheme of Learning",
+    file: "BS9_English_Language_Term1_Scheme.docx"
+  },
+
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "Mathematics",
+    term: "First Term",
+    title: "Basic 9 Mathematics — First Term Scheme of Learning",
+    file: "BS9_Mathematics_Term1_Scheme.docx"
+  },
+
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "Science",
+    term: "First Term",
+    title: "Basic 9 Science — First Term Scheme of Learning",
+    file: "BS9_Science_Term1_Scheme.docx"
+  },
+
+  {
+    type: "scheme",
+    class: "Basic 9",
+    subject: "Social Studies",
+    term: "First Term",
+    title: "Basic 9 Social Studies — First Term Scheme of Learning",
+    file: "BS9_Social_Studies_Term1_Scheme.docx"
+    },
+
 
   /* =====================================================
      EXISTING LESSON RESOURCES
