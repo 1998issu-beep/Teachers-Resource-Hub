@@ -12,7 +12,7 @@ const resources = [
     subject: "Computing",
     term: "First Term",
     title: "Basic 7 Computing — First Term Scheme of Learning",
-    file: "resources/basic7/computing/term1/BS7_Computing_Term1_Scheme.docx"
+    file: "BS7_Computing_Term1_Scheme.docx"
   },
 
   {
@@ -21,7 +21,7 @@ const resources = [
     subject: "English",
     term: "First Term",
     title: "Basic 7 English Language — First Term Scheme of Learning",
-    file: "resources/basic7/english/term1/BS7_English_Language_Term1_Scheme.docx"
+    file: "BS7_English_Language_Term1_Scheme.docx"
   },
 
   {
@@ -30,7 +30,7 @@ const resources = [
     subject: "Mathematics",
     term: "First Term",
     title: "Basic 7 Mathematics — First Term Scheme of Learning",
-    file: "resources/basic7/mathematics/term1/BS7_Mathematics_Term1_Scheme.docx"
+    file: "BS7_Mathematics_Term1_Scheme.docx"
   },
 
   {
@@ -39,7 +39,7 @@ const resources = [
     subject: "Science",
     term: "First Term",
     title: "Basic 7 Science — First Term Scheme of Learning",
-    file: "resources/basic7/science/term1/BS7_Science_Term1_Scheme.docx"
+    file: "BS7_Science_Term1_Scheme.docx"
   },
 
   {
@@ -48,7 +48,7 @@ const resources = [
     subject: "Social Studies",
     term: "First Term",
     title: "Basic 7 Social Studies — First Term Scheme of Learning",
-    file: "resources/basic7/social-studies/term1/BS7_Social_Studies_Term1_Scheme.docx"
+    file: "BS7_Social_Studies_Term1_Scheme.docx"
   },
 
 
@@ -60,7 +60,7 @@ const resources = [
     subject: "Computing",
     term: "First Term",
     title: "Basic 8 Computing — First Term Scheme of Learning",
-    file: "resources/basic8/computing/term1/BS8_Computing_Term1_Scheme.docx"
+    file: "BS8_Computing_Term1_Scheme.docx"
   },
 
   {
@@ -69,7 +69,7 @@ const resources = [
     subject: "English",
     term: "First Term",
     title: "Basic 8 English Language — First Term Scheme of Learning",
-    file: "resources/basic8/english/term1/BS8_English_Language_Term1_Scheme.docx"
+    file: "BS8_English_Language_Term1_Scheme.docx"
   },
 
   {
@@ -78,7 +78,7 @@ const resources = [
     subject: "Mathematics",
     term: "First Term",
     title: "Basic 8 Mathematics — First Term Scheme of Learning",
-    file: "resources/basic8/mathematics/term1/BS8_Mathematics_Term1_Scheme.docx"
+    file: "BS8_Mathematics_Term1_Scheme.docx"
   },
 
   {
@@ -87,7 +87,7 @@ const resources = [
     subject: "Science",
     term: "First Term",
     title: "Basic 8 Science — First Term Scheme of Learning",
-    file: "resources/basic8/science/term1/BS8_Science_Term1_Scheme.docx"
+    file: "BS8_Science_Term1_Scheme.docx"
   },
 
   {
@@ -96,13 +96,12 @@ const resources = [
     subject: "Social Studies",
     term: "First Term",
     title: "Basic 8 Social Studies — First Term Scheme of Learning",
-    file: "resources/basic8/social-studies/term1/BS8_Social_Studies_Term1_Scheme.docx"
+    file: "BS8_Social_Studies_Term1_Scheme.docx"
   },
 
 
   /* =====================================================
-     WEEKLY LESSON RESOURCES
-     Existing test resources
+     EXISTING LESSON RESOURCES
   ===================================================== */
 
   {
