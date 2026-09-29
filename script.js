@@ -130,7 +130,334 @@ async function invokePaymentFunction(body) {
 
   return payload || {};
 }
+/* =========================================================
+   BEAUTIFUL SITE-WIDE NOTIFICATION POPUPS
+   ========================================================= */
 
+function ensureTRHNotificationStyles() {
+  if (document.getElementById("trhNotificationStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "trhNotificationStyles";
+
+  style.textContent = `
+    .trh-notification-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(20, 10, 35, 0.58);
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+      opacity: 0;
+      animation: trhNotificationFadeIn 0.22s ease forwards;
+    }
+
+    .trh-notification-card {
+      width: min(420px, 100%);
+      overflow: hidden;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow:
+        0 25px 70px rgba(35, 15, 65, 0.30),
+        0 8px 25px rgba(109, 40, 217, 0.12);
+      transform: translateY(18px) scale(0.96);
+      animation: trhNotificationPop 0.28s cubic-bezier(.2,.8,.2,1) forwards;
+      font-family: inherit;
+    }
+
+    .trh-notification-header {
+      position: relative;
+      padding: 25px 24px 22px;
+      color: #ffffff;
+      overflow: hidden;
+    }
+
+    .trh-notification-header::after {
+      content: "";
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      right: -55px;
+      top: -65px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .trh-notification-icon {
+      position: relative;
+      z-index: 2;
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 13px;
+      border-radius: 17px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.20);
+      font-size: 25px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+    }
+
+    .trh-notification-title {
+      position: relative;
+      z-index: 2;
+      margin: 0;
+      color: #ffffff;
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+    }
+
+    .trh-notification-body {
+      padding: 22px 24px 24px;
+      color: #30283a;
+    }
+
+    .trh-notification-message {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    .trh-notification-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .trh-notification-button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 20px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 750;
+      cursor: pointer;
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+    }
+
+    .trh-notification-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .trh-notification-button:active {
+      transform: translateY(0);
+    }
+
+    .trh-notification-ok {
+      color: #ffffff;
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+      box-shadow: 0 7px 18px rgba(109,40,217,0.24);
+    }
+
+    .trh-notification-cancel {
+      color: #5d5365;
+      background: #f3f0f6;
+    }
+
+    /* SUCCESS */
+    .trh-notification-success .trh-notification-header {
+      background: linear-gradient(135deg, #059669, #10b981);
+    }
+
+    /* ERROR */
+    .trh-notification-error .trh-notification-header {
+      background: linear-gradient(135deg, #dc2626, #ef4444);
+    }
+
+    /* WARNING */
+    .trh-notification-warning .trh-notification-header {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+    }
+
+    /* INFO */
+    .trh-notification-info .trh-notification-header {
+      background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+    }
+
+    @keyframes trhNotificationFadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes trhNotificationPop {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes trhNotificationFadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .trh-notification-overlay {
+        padding: 16px;
+      }
+
+      .trh-notification-card {
+        border-radius: 21px;
+      }
+
+      .trh-notification-header {
+        padding: 22px 20px 20px;
+      }
+
+      .trh-notification-body {
+        padding: 20px;
+      }
+
+      .trh-notification-title {
+        font-size: 19px;
+      }
+
+      .trh-notification-message {
+        font-size: 14.5px;
+      }
+
+      .trh-notification-actions {
+        margin-top: 20px;
+      }
+
+      .trh-notification-button {
+        width: 100%;
+        padding: 12px 18px;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+function showTRHNotification(message, options = {}) {
+  ensureTRHNotificationStyles();
+
+  const type = options.type || "info";
+  const title = options.title || (
+    type === "success"
+      ? "Success"
+      : type === "error"
+      ? "Something went wrong"
+      : type === "warning"
+      ? "Please note"
+      : "Teacher Resource Hub"
+  );
+
+  const icon = options.icon || (
+    type === "success"
+      ? "✓"
+      : type === "error"
+      ? "!"
+      : type === "warning"
+      ? "⚠"
+      : "🔔"
+  );
+
+  const overlay = document.createElement("div");
+  overlay.className = "trh-notification-overlay";
+
+  overlay.innerHTML = `
+    <div class="trh-notification-card trh-notification-${type}"
+         role="dialog"
+         aria-modal="true"
+         aria-labelledby="trhNotificationTitle">
+
+      <div class="trh-notification-header">
+
+        <div class="trh-notification-icon">
+          ${icon}
+        </div>
+
+        <h3 class="trh-notification-title" id="trhNotificationTitle">
+          ${escapeHTML(title)}
+        </h3>
+
+      </div>
+
+      <div class="trh-notification-body">
+
+        <p class="trh-notification-message">
+          ${escapeHTML(String(message))}
+        </p>
+
+        <div class="trh-notification-actions">
+
+          <button
+            type="button"
+            class="trh-notification-button trh-notification-ok">
+            OK
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  const okButton = overlay.querySelector(".trh-notification-ok");
+
+  function closeNotification() {
+    overlay.style.animation =
+      "trhNotificationFadeOut 0.18s ease forwards";
+
+    setTimeout(() => {
+      overlay.remove();
+    }, 180);
+  }
+
+  okButton.addEventListener("click", closeNotification);
+
+  overlay.addEventListener("click", function(event) {
+    if (event.target === overlay) {
+      closeNotification();
+    }
+  });
+
+  setTimeout(() => {
+    okButton.focus();
+  }, 50);
+}
+
+
+/* =========================================================
+   REPLACE NORMAL BROWSER ALERTS WITH BEAUTIFUL POPUPS
+   ========================================================= */
+
+window.alert = function(message) {
+  showTRHNotification(message, {
+    type: "info",
+    title: "Teacher Resource Hub",
+    icon: "🔔"
+  });
+};
 async function startTermPayment(term) {
   if (paymentInProgress) return;
 
