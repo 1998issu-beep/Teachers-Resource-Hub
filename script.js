@@ -928,15 +928,21 @@ async function handleResourceDownload(targetKey) {
     }
 
     if (data?.reason === "free_limit_reached") {
-      const shouldPay = window.confirm(
-        "You have used your 2 free downloads for this term.\n\n" +
-        `Unlock ${currentTerm || resource.term || "this term"} for GH₵${TERM_UNLOCK_PRICE} to continue downloading resources.\n\n` +
-        "Would you like to continue to Paystack?"
-      );
+     const shouldPay = await showTRHConfirmation(
+  `You have used your 2 free downloads for this term.\n\n` +
+  `Unlock ${dbResource.term} for GH₵${TERM_UNLOCK_PRICE_GHS} to continue downloading resources.\n\n` +
+  `Would you like to continue to Paystack?`,
+  {
+    title: "Unlock Your Term Resources",
+    icon: "💳",
+    confirmText: "Continue to Paystack",
+    cancelText: "Cancel"
+  }
+);
 
-      if (shouldPay) {
-        await startTermPayment(resource.term || currentTerm);
-      }
+if (shouldPay) {
+  await startTermPayment(dbResource.term);
+}
 
       return;
     }
