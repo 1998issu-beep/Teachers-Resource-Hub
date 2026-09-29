@@ -458,6 +458,167 @@ window.alert = function(message) {
     icon: "🔔"
   });
 };
+/* =========================================================
+   BEAUTIFUL CONFIRMATION POPUP
+   ========================================================= */
+
+function showTRHConfirmation(message, options = {}) {
+  ensureTRHNotificationStyles();
+
+  const title = options.title || "Continue to Payment?";
+  const icon = options.icon || "💳";
+  const confirmText = options.confirmText || "Continue";
+  const cancelText = options.cancelText || "Cancel";
+
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "trh-notification-overlay";
+
+    overlay.innerHTML = `
+      <div class="trh-notification-card trh-confirm-card"
+           role="dialog"
+           aria-modal="true"
+           aria-labelledby="trhConfirmTitle">
+
+        <div class="trh-notification-header trh-confirm-header">
+
+          <div class="trh-notification-icon">
+            ${icon}
+          </div>
+
+          <h3 class="trh-notification-title" id="trhConfirmTitle">
+            ${escapeHTML(title)}
+          </h3>
+
+        </div>
+
+        <div class="trh-notification-body">
+
+          <p class="trh-notification-message">
+            ${escapeHTML(String(message))}
+          </p>
+
+          <div class="trh-notification-actions">
+
+            <button
+              type="button"
+              class="trh-notification-button trh-notification-cancel">
+              ${escapeHTML(cancelText)}
+            </button>
+
+            <button
+              type="button"
+              class="trh-notification-button trh-notification-ok trh-confirm-button">
+              ${escapeHTML(confirmText)}
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const cancelButton =
+      overlay.querySelector(".trh-notification-cancel");
+
+    const confirmButton =
+      overlay.querySelector(".trh-confirm-button");
+
+    let finished = false;
+
+    function closeConfirmation(result) {
+      if (finished) return;
+
+      finished = true;
+
+      overlay.style.animation =
+        "trhNotificationFadeOut 0.18s ease forwards";
+
+      setTimeout(() => {
+        overlay.remove();
+        resolve(result);
+      }, 180);
+    }
+
+    cancelButton.addEventListener("click", () => {
+      closeConfirmation(false);
+    });
+
+    confirmButton.addEventListener("click", () => {
+      closeConfirmation(true);
+    });
+
+    overlay.addEventListener("click", function(event) {
+      if (event.target === overlay) {
+        closeConfirmation(false);
+      }
+    });
+
+    setTimeout(() => {
+      confirmButton.focus();
+    }, 50);
+  });
+     }
+/* =========================================================
+   CONFIRMATION POPUP STYLING
+   ========================================================= */
+
+(function ensureTRHConfirmationStyles() {
+  if (document.getElementById("trhConfirmationStyles")) return;
+
+  const style = document.createElement("style");
+  style.id = "trhConfirmationStyles";
+
+  style.textContent = `
+    .trh-confirm-header {
+      background: linear-gradient(
+        135deg,
+        #5b21b6,
+        #7c3aed,
+        #9333ea
+      );
+    }
+
+    .trh-confirm-card {
+      box-shadow:
+        0 30px 80px rgba(48, 20, 90, 0.35),
+        0 10px 30px rgba(124, 58, 237, 0.18);
+    }
+
+    .trh-confirm-button {
+      min-width: 120px;
+      background: linear-gradient(
+        135deg,
+        #6d28d9,
+        #8b5cf6
+      );
+    }
+
+    .trh-notification-cancel {
+      min-width: 95px;
+    }
+
+    @media (max-width: 480px) {
+      .trh-notification-actions {
+        flex-direction: column-reverse;
+      }
+
+      .trh-notification-button {
+        width: 100%;
+      }
+
+      .trh-confirm-button,
+      .trh-notification-cancel {
+        min-width: 0;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+})();
 async function startTermPayment(term) {
   if (paymentInProgress) return;
 
