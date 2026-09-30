@@ -17,7 +17,7 @@ const resources = [
   { type: "scheme", class: "Basic 9", subject: "English", term: "First Term", title: "Basic 9 English — First Term Scheme of Learning", file: "BS9_English_Language_Term1_Scheme.docx" },
   { type: "scheme", class: "Basic 9", subject: "Mathematics", term: "First Term", title: "Basic 9 Mathematics — First Term Scheme of Learning", file: "BS9_Mathematics_Term1_Scheme.docx" },
   { type: "scheme", class: "Basic 9", subject: "Science", term: "First Term", title: "Basic 9 Science — First Term Scheme of Learning", file: "BS9_Science_Term1_Scheme.docx" },
-  { type: "scheme", class: "Basic 9", subject: "Social Studies", term: "First Term", title: "Basic 9 Social Studies — First Term Scheme of Learning", file: "BS9_Social_Studies_Term1_Scheme.docx" }
+  { type: "scheme", class: "Basic 9", subject: "Social Studies", term: "First Term", title: "Basic 9 Social Studies — First Term Scheme of Learning", file: "BS9_Social_Studies_Term1_Scheme.docx" },
 
   /* =====================================================
      FIRST TERM WEEKLY RESOURCES
