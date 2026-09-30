@@ -1,0 +1,48 @@
+name: Upload DOCX Resources to Supabase
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload-resources:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload DOCX files to private Supabase Storage
+        env:
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          set -e
+
+          PROJECT_URL="https://brustfmxrxyvqdwwydag.supabase.co"
+          BUCKET="teacher-resources"
+
+          count=0
+
+          while IFS= read -r -d '' file; do
+            filename="$(basename "$file")"
+
+            echo "Uploading: $filename"
+
+            curl --fail-with-body \
+              --retry 3 \
+              --retry-delay 2 \
+              -X POST \
+              "${PROJECT_URL}/storage/v1/object/${BUCKET}/${filename}" \
+              -H "Authorization: Bearer ${SUPABASE_SECRET_KEY}" \
+              -H "apikey: ${SUPABASE_SECRET_KEY}" \
+              -H "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" \
+              -H "x-upsert: true" \
+              --data-binary "@${file}"
+
+            count=$((count + 1))
+          done < <(find . -type f -iname '*.docx' -not -path './.git/*' -print0)
+
+          echo ""
+          echo "========================================"
+          echo "UPLOAD COMPLETE"
+          echo "DOCX files uploaded: $count"
+          echo "========================================"
