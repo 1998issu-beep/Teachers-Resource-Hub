@@ -1,0 +1,53 @@
+name: Remove Public DOCX Files
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  remove-docx:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove DOCX files from current repository
+        run: |
+          set -e
+
+          echo "Finding DOCX files..."
+          find . -type f -iname '*.docx' -not -path './.git/*' -print
+
+          echo "Deleting DOCX files..."
+          find . -type f -iname '*.docx' -not -path './.git/*' -delete
+
+          remaining=$(find . -type f -iname '*.docx' -not -path './.git/*' | wc -l)
+
+          echo "Remaining DOCX files: $remaining"
+
+          if [ "$remaining" -ne 0 ]; then
+            echo "ERROR: Some DOCX files remain."
+            exit 1
+          fi
+
+      - name: Commit and push cleanup
+        run: |
+          set -e
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No DOCX files needed to be removed."
+            exit 0
+          fi
+
+          git commit -m "Remove public DOCX resource files"
+          git push
