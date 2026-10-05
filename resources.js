@@ -250,7 +250,7 @@ const resources = [
   { type: "lesson", class: "Basic 9", subject: "Social Studies", term: "First Term", week: "Week 12", topic: "Lesson Plans and Notes", title: "Basic 9 Social Studies — Week 12 Lesson Plans and Notes", file: "Basic_9_Social_Studies_Term_1_Week_12_Lesson_Plans_and_Notes.docx" },
   { type: "lesson", class: "Basic 9", subject: "Social Studies", term: "First Term", week: "Week 13", topic: "Lesson Plans and Notes", title: "Basic 9 Social Studies — Week 13 Lesson Plans and Notes", file: "Basic_9_Social_Studies_Term_1_Week_13_Lesson_Plans_and_Notes.docx" },
   { type: "lesson", class: "Basic 9", subject: "Social Studies", term: "First Term", week: "Week 14", topic: "Lesson Plans and Notes", title: "Basic 9 Social Studies — Week 14 Lesson Plans and Notes", file: "Basic_9_Social_Studies_Term_1_Week_14_Lesson_Plans_and_Notes.docx" },
-  { type: "lesson", class: "Basic 9", subject: "Social Studies", term: "First Term", week: "Week 15", topic: "Lesson Plans and Notes", title: "Basic 9 Social Studies — Week 15 Lesson Plans and Notes", file: "Basic_9_Social_Studies_Term_1_Week_15_Lesson_Plans_and_Notes.docx" }
+  { type: "lesson", class: "Basic 9", subject: "Social Studies", term: "First Term", week: "Week 15", topic: "Lesson Plans and Notes", title: "Basic 9 Social Studies — Week 15 Lesson Plans and Notes", file: "Basic_9_Social_Studies_Term_1_Week_15_Lesson_Plans_and_Notes.docx" },
 
 
   /* =====================================================
