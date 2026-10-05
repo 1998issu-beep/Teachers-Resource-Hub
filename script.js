@@ -15,7 +15,7 @@ const primarySubjects = [
 ];
 
 const jhsSubjects = [
-  "Mathematics","Computing","English","Science","Social Studies"
+  "Mathematics","Computing","English","Science","Social Studies","Religious and Moral Education"
 ];
 
 /* APP STATE */
