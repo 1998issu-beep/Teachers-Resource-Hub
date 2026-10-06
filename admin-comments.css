@@ -1,0 +1,35 @@
+
+/* Private comment moderation page */
+.admin-main{max-width:1050px}
+.admin-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:34px 0 22px}
+.admin-tab{border:1px solid #e2dbea;background:#fff;color:#51465e;border-radius:12px;padding:11px 16px;font:inherit;font-weight:800;cursor:pointer}
+.admin-tab span{display:inline-flex;min-width:24px;height:24px;padding:0 6px;align-items:center;justify-content:center;border-radius:999px;background:#f1eaff;color:#6d28d9;margin-left:5px;font-size:.78rem}
+.admin-tab.active{background:#6d28d9;color:#fff;border-color:#6d28d9}
+.admin-tab.active span{background:rgba(255,255,255,.18);color:#fff}
+.admin-comments{display:flex;flex-direction:column;gap:16px}
+.admin-comment-card{background:#fff;border:1px solid #e6e0ec;border-radius:20px;padding:22px;box-shadow:0 9px 28px rgba(31,18,67,.05)}
+.admin-comment-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.admin-comment-author{font-weight:800;color:#24113f}
+.admin-comment-meta{font-size:.78rem;color:#8a8192;margin-top:4px}
+.admin-status{display:inline-flex;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:800;text-transform:capitalize}
+.admin-status.pending{background:#fff5df;color:#9a6200}
+.admin-status.approved{background:#eaf8ef;color:#16703b}
+.admin-status.rejected{background:#fff0f0;color:#a33b3b}
+.admin-article-label{margin:18px 0 10px;color:#756c80;font-size:.86rem}
+.admin-article-label strong{color:#4b3c59}
+.admin-comment-body{padding:16px;border-radius:13px;background:#faf8fd;color:#44394d;line-height:1.7;white-space:pre-wrap}
+.admin-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+.admin-action{border:0;border-radius:10px;padding:10px 14px;font:inherit;font-weight:800;cursor:pointer}
+.admin-action.approve{background:#6d28d9;color:#fff}
+.admin-action.reject{background:#f4edf9;color:#5b21b6}
+.admin-action.delete{background:#fff0f0;color:#a33b3b}
+.admin-action:disabled{opacity:.55;cursor:not-allowed}
+.admin-notice{display:none;margin-top:22px;padding:13px 16px;border-radius:12px;font-weight:700}
+.admin-notice.show{display:block}
+.admin-notice.success{background:#edf9f1;color:#176b38;border:1px solid #cdebd6}
+.admin-notice.error{background:#fff0f0;color:#a33b3b;border:1px solid #f0cccc}
+@media(max-width:600px){
+  .admin-comment-card{padding:18px}
+  .admin-comment-top{flex-direction:column}
+  .admin-status{align-self:flex-start}
+}
