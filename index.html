@@ -76,6 +76,19 @@
 .community-button{flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;padding:13px 22px;border-radius:11px;background:#1877f2;color:#fff;text-decoration:none;font-weight:700;transition:.2s ease}
 .community-button:hover{transform:translateY(-2px)}
 @media(max-width:760px){.support-section{padding:55px 16px}.support-card{grid-template-columns:1fr;padding:28px 22px;gap:25px}.support-visual{min-height:190px}.account-box{padding:28px 22px}.community-section{padding:50px 16px}.community-card{flex-direction:column;align-items:flex-start;padding:28px 22px}.community-button{width:100%}}
+
+.education-section{padding:72px 20px;background:#fff}
+.education-card{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1.25fr .75fr;gap:38px;align-items:center;padding:42px;border-radius:24px;background:linear-gradient(135deg,#faf7ff,#fff);border:1px solid rgba(109,40,217,.12);box-shadow:0 18px 50px rgba(31,18,67,.07)}
+.education-content h2{margin:5px 0 14px;font-family:"Playfair Display",serif;color:#24113f;font-size:clamp(2rem,4vw,3rem);line-height:1.12}
+.education-content p{margin:0 0 24px;color:#625b6c;line-height:1.8}
+.education-button{display:inline-flex;align-items:center;justify-content:center;padding:13px 22px;border-radius:11px;background:#6d28d9;color:#fff;text-decoration:none;font-weight:700;transition:.2s ease;box-shadow:0 8px 20px rgba(109,40,217,.18)}
+.education-button:hover{transform:translateY(-2px);background:#5b21b6}
+.education-visual{min-height:235px;border-radius:20px;background:radial-gradient(circle at center,rgba(109,40,217,.15),rgba(109,40,217,.03));display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.education-visual-mark{width:78px;height:78px;border-radius:22px;background:#6d28d9;color:#fff;display:flex;align-items:center;justify-content:center;font-size:34px;box-shadow:0 14px 35px rgba(109,40,217,.2);margin-bottom:18px}
+.education-visual-text strong{display:block;color:#24113f;font-family:"Playfair Display",serif;font-size:1.4rem}
+.education-visual-text span{display:block;margin-top:6px;color:#756d7f;font-size:.9rem}
+@media(max-width:760px){.education-section{padding:55px 16px}.education-card{grid-template-columns:1fr;padding:28px 22px;gap:25px}.education-visual{min-height:190px}}
+
 </style>
 </head>
 
@@ -94,6 +107,7 @@
     <nav class="desktop-nav">
       <a href="#" onclick="goHome();return false;">Home</a>
       <a href="#resources" onclick="scrollToLibrary();return false;">Resources</a>
+      <a href="articles.html">Education in Ghana</a>
       <a href="#about">About</a>
       <a href="#support">Support Us</a>
       <button type="button" class="account-button" id="accountButton" onclick="openAccountModal()">👤 Teacher Account</button>
@@ -105,6 +119,7 @@
   <div class="mobile-nav" id="mobileNav">
     <a href="#" onclick="goHome();closeMobileMenu();return false;">Home</a>
     <a href="#resources" onclick="scrollToLibrary();closeMobileMenu();return false;">Resources</a>
+    <a href="articles.html">Education in Ghana</a>
     <a href="#about" onclick="closeMobileMenu();">About</a>
     <a href="#support" onclick="closeMobileMenu();">Support Us</a>
     <button type="button" class="account-button" id="mobileAccountButton" onclick="openAccountModal();closeMobileMenu();">👤 Teacher Account</button>
@@ -159,6 +174,31 @@
     <p class="library-description" id="libraryDescription"></p>
     <div id="library" class="library"></div>
     <div class="ad-box"><span>Advertisement</span></div>
+  </div>
+</section>
+
+
+<section class="education-section" id="education">
+  <div class="section-container">
+    <div class="education-card">
+      <div class="education-content">
+        <span class="section-eyebrow">EDUCATION IN GHANA</span>
+        <h2>Ideas, stories and perspectives on education in Ghana.</h2>
+        <p>
+          Read practical articles, opinions and reflections on teaching,
+          learning, curriculum, teacher experiences, technology and the
+          challenges and opportunities in Ghanaian education.
+        </p>
+        <a href="articles.html" class="education-button">Read Education Articles →</a>
+      </div>
+      <div class="education-visual">
+        <div class="education-visual-mark">✦</div>
+        <div class="education-visual-text">
+          <strong>Education in Ghana</strong>
+          <span>Ideas • Stories • Analysis</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -230,6 +270,7 @@
     <div class="footer-links">
       <a href="#" onclick="goHome();return false;">Home</a>
       <a href="#resources">Resources</a>
+      <a href="articles.html">Education in Ghana</a>
       <a href="#about">About</a>
       <a href="#support">Support Us</a>
       <a href="https://www.facebook.com/profile.php?id=61594721108114" target="_blank" rel="noopener noreferrer">Facebook</a>
