@@ -1,0 +1,37 @@
+
+/* Threaded Reader Replies */
+.edu-reply-trigger{
+  margin-top:14px;
+  padding:4px 0;
+  border:0;
+  background:transparent;
+  color:#6d28d9;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+.edu-reply-trigger:hover{text-decoration:underline}
+.edu-reply-form{
+  display:none;
+  margin:12px 0 0 22px;
+  padding:15px;
+  border-left:3px solid #c4a8ef;
+  background:#faf8fd;
+  border-radius:0 12px 12px 0;
+}
+.edu-reply-form.open{display:block}
+.edu-reply-form textarea{
+  width:100%;
+  min-height:90px;
+  resize:vertical;
+  box-sizing:border-box;
+  border:1px solid #ddd6e7;
+  border-radius:10px;
+  padding:11px;
+  font:inherit;
+  outline:none;
+}
+.edu-reply-form textarea:focus{
+  border-color:#8b5cf6;
+  box-shadow:0 0 0 3px rgba(139,92,246,.12);
+}
