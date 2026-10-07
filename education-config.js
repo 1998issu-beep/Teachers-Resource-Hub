@@ -13,7 +13,7 @@ const SUPABASE_URL = "https://brustfmxrxyvqdwwydag.supabase.co";
    - service_role key
    - PAYSTACK secret key
 */
-const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_yqmL_JtCm_-vqpwfzyZV3Q_ABtVsLF3";
 
 /*
    Make the configuration available to article.js.
