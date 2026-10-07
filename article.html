@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Education in Ghana | Teacher Resource Hub</title>
+
+  <link rel="stylesheet" href="education.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="education-config.js?v=2"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+
+    <a href="index.html" class="brand">
+      <div class="brand-mark">TR</div>
+
+      <div class="brand-text">
+        <strong>Teacher Resource Hub</strong>
+        <span>Resources for teaching. Ideas for education.</span>
+      </div>
+    </a>
+
+    <nav class="desktop-nav">
+      <a href="index.html">Home</a>
+      <a href="articles.html">Education in Ghana</a>
+      <a href="index.html#resources">Resources</a>
+      <a href="index.html#support">Support Us</a>
+    </nav>
+
+  </div>
+</header>
+
+
+<main class="article-page">
+
+  <div class="article-container">
+
+    <a href="articles.html" class="back-link">
+      ← Back to Education in Ghana
+    </a>
+
+    <article id="articleContent">
+
+      <div class="article-loading">
+        Loading article…
+      </div>
+
+    </article>
+
+
+    <section class="discussion-section" id="discussion">
+
+      <div class="discussion-header">
+        <h2>Reader Discussion</h2>
+
+        <p>
+          Share your thoughts, experiences or perspective on this article.
+        </p>
+      </div>
+
+
+      <div class="comment-form-card">
+
+        <h3>Join the discussion</h3>
+
+        <textarea
+          id="commentInput"
+          placeholder="Write your comment..."
+          maxlength="2000"
+        ></textarea>
+
+        <button
+          type="button"
+          id="commentSubmit"
+          class="comment-submit"
+        >
+          Post Comment
+        </button>
+
+        <p
+          class="comment-login-note"
+          id="commentLoginNote"
+        ></p>
+
+      </div>
+
+
+      <div id="commentsList">
+
+        <div class="comments-loading">
+          Loading comments…
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+
+<div
+  id="notificationModal"
+  class="notification-modal"
+  aria-hidden="true"
+>
+
+  <div class="notification-box">
+
+    <div
+      class="notification-icon"
+      id="notificationIcon"
+    >
+      ✓
+    </div>
+
+    <div class="notification-content">
+
+      <h3 id="notificationTitle">
+        Comment submitted
+      </h3>
+
+      <p id="notificationMessage">
+        Your comment has been received and is awaiting approval.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      id="notificationClose"
+      class="notification-close"
+    >
+      OK
+    </button>
+
+  </div>
+
+</div>
+
+
+<script src="article.js"></script>
+
+</body>
+</html>
