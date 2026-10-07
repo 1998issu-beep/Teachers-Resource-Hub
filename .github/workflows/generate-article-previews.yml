@@ -1,0 +1,45 @@
+name: Generate Article Share Previews
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install image generator
+        run: npm install sharp
+
+      - name: Generate previews
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: node .github/scripts/generate-article-previews.js
+
+      - name: Commit generated previews
+        run: |
+          git config user.name "Teacher Resource Hub"
+          git config user.email "actions@github.com"
+
+          git add share images/articles
+
+          if git diff --cached --quiet; then
+            echo "No new article previews."
+          else
+            git commit -m "Auto-generate article share previews"
+            git push
+          fi
