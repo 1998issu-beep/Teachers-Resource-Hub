@@ -745,3 +745,143 @@
   );
 
 })();
+/* =========================================================
+   ARTICLE SHARING
+========================================================= */
+
+function initializeArticleSharing() {
+  const whatsappButton = document.getElementById("shareWhatsApp");
+  const facebookButton = document.getElementById("shareFacebook");
+  const copyButton = document.getElementById("shareCopy");
+  const nativeButton = document.getElementById("shareNative");
+  const status = document.getElementById("shareStatus");
+
+  if (
+    !whatsappButton &&
+    !facebookButton &&
+    !copyButton &&
+    !nativeButton
+  ) {
+    return;
+  }
+
+  const articleUrl = window.location.href;
+  const articleTitle =
+    document.querySelector(".article-title")?.textContent?.trim() ||
+    document.querySelector("h1")?.textContent?.trim() ||
+    document.title;
+
+  const shareText =
+    articleTitle + "\n\nRead it on Teacher Resource Hub:";
+
+  function showShareStatus(message) {
+    if (!status) return;
+
+    status.textContent = message;
+
+    clearTimeout(window.__trhShareStatusTimer);
+
+    window.__trhShareStatusTimer = setTimeout(function () {
+      status.textContent = "";
+    }, 3000);
+  }
+
+  /* WhatsApp */
+  if (whatsappButton) {
+    whatsappButton.addEventListener("click", function () {
+      const whatsappUrl =
+        "https://wa.me/?text=" +
+        encodeURIComponent(shareText + "\n" + articleUrl);
+
+      window.open(
+        whatsappUrl,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    });
+  }
+
+  /* Facebook */
+  if (facebookButton) {
+    facebookButton.addEventListener("click", function () {
+      const facebookUrl =
+        "https://www.facebook.com/sharer/sharer.php?u=" +
+        encodeURIComponent(articleUrl);
+
+      window.open(
+        facebookUrl,
+        "_blank",
+        "width=700,height=600,noopener,noreferrer"
+      );
+    });
+  }
+
+  /* Copy link */
+  if (copyButton) {
+    copyButton.addEventListener("click", async function () {
+      try {
+        await navigator.clipboard.writeText(articleUrl);
+
+        showShareStatus("Article link copied successfully.");
+      } catch (error) {
+        /* Fallback for browsers where Clipboard API is unavailable */
+
+        const textarea = document.createElement("textarea");
+        textarea.value = articleUrl;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        try {
+          document.execCommand("copy");
+          showShareStatus("Article link copied successfully.");
+        } catch (copyError) {
+          showShareStatus(
+            "Unable to copy automatically. Please copy the link manually."
+          );
+        }
+
+        textarea.remove();
+      }
+    });
+  }
+
+  /* Native Android / device sharing */
+  if (nativeButton) {
+    if (!navigator.share) {
+      nativeButton.style.display = "none";
+    } else {
+      nativeButton.addEventListener("click", async function () {
+        try {
+          await navigator.share({
+            title: articleTitle,
+            text: shareText,
+            url: articleUrl
+          });
+        } catch (error) {
+          /* User cancelling the native share window is normal. */
+          if (error && error.name !== "AbortError") {
+            console.error(
+              "Native sharing failed:",
+              error
+            );
+          }
+        }
+      });
+    }
+  }
+}
+
+
+/* Start sharing after the article page is ready */
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    initializeArticleSharing
+  );
+} else {
+  initializeArticleSharing();
+}
