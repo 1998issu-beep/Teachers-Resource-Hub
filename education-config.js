@@ -13,7 +13,7 @@
    * Example:
    * const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_....";
    */
-  const SUPABASE_PUBLISHABLE_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_KEY_HERE";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_yqmL_JtCm_-vqpwfzyZV3Q_ABtVsLF3";
 
   if (!window.supabase || typeof window.supabase.createClient !== "function") {
     console.error("Teacher Resource Hub: Supabase library has not loaded.");
