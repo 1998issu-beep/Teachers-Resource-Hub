@@ -130,8 +130,8 @@ function createSVG(article) {
 }
 
 function createHTML(article, imageUrl) {
-function createHTML(article, imageUrl) {
   const title = escapeHTML(article.title);
+
   const description = escapeHTML(
     article.excerpt ||
     "Read this article on Teacher Resource Hub."
@@ -146,30 +146,58 @@ function createHTML(article, imageUrl) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 
 <title>${title} | Teacher Resource Hub</title>
 
-<meta name="description" content="${description}">
+<meta name="description"
+      content="${description}">
 
-<meta property="og:type" content="article">
-<meta property="og:title" content="${title}">
-<meta property="og:description" content="${description}">
-<meta property="og:image" content="${imageUrl}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="${title}">
-<meta property="og:url" content="${shareUrl}">
-<meta property="og:site_name" content="Teacher Resource Hub">
+<meta property="og:type"
+      content="article">
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${title}">
-<meta name="twitter:description" content="${description}">
-<meta name="twitter:image" content="${imageUrl}">
+<meta property="og:title"
+      content="${title}">
 
-<link rel="canonical" href="${shareUrl}">
+<meta property="og:description"
+      content="${description}">
+
+<meta property="og:image"
+      content="${imageUrl}">
+
+<meta property="og:image:width"
+      content="1200">
+
+<meta property="og:image:height"
+      content="630">
+
+<meta property="og:image:alt"
+      content="${title}">
+
+<meta property="og:url"
+      content="${shareUrl}">
+
+<meta property="og:site_name"
+      content="Teacher Resource Hub">
+
+<meta name="twitter:card"
+      content="summary_large_image">
+
+<meta name="twitter:title"
+      content="${title}">
+
+<meta name="twitter:description"
+      content="${description}">
+
+<meta name="twitter:image"
+      content="${imageUrl}">
+
+<link rel="canonical"
+      href="${shareUrl}">
 
 <style>
+
 body {
   font-family: Arial, sans-serif;
   padding: 40px 20px;
@@ -188,6 +216,7 @@ a {
   text-decoration: none;
   border-radius: 10px;
 }
+
 </style>
 
 </head>
@@ -203,14 +232,17 @@ Read the full article
 </a>
 
 <script>
+
 setTimeout(function() {
   window.location.href = ${JSON.stringify(articleUrl)};
 }, 1500);
+
 </script>
 
 </body>
 </html>`;
 }
+
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error(
@@ -225,19 +257,27 @@ async function main() {
   );
 
   for (const article of articles) {
+
     const slug =
       article.slug || slugify(article.title);
 
     const imageFile =
-      path.join(imageDir, `${slug}.png`);
+      path.join(
+        imageDir,
+        `${slug}.png`
+      );
 
     const htmlFile =
-      path.join(shareDir, `${slug}.html`);
+      path.join(
+        shareDir,
+        `${slug}.html`
+      );
 
     const imageUrl =
       `${SITE_URL}/images/articles/${slug}.png`;
 
-    const svg = createSVG(article);
+    const svg =
+      createSVG(article);
 
     await sharp(Buffer.from(svg))
       .png()
@@ -250,7 +290,9 @@ async function main() {
       "utf8"
     );
 
-    console.log(`Generated: ${slug}`);
+    console.log(
+      `Generated: ${slug}`
+    );
   }
 }
 
