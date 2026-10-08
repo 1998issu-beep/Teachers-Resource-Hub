@@ -106,6 +106,7 @@ function createSVG(article) {
   <foreignObject x="105" y="265"
                  width="990"
                  height="145">
+
     <div xmlns="http://www.w3.org/1999/xhtml"
          style="
            font-family:Arial,sans-serif;
@@ -115,6 +116,7 @@ function createSVG(article) {
          ">
       ${excerpt}
     </div>
+
   </foreignObject>
 
   <text x="105" y="475"
@@ -127,6 +129,43 @@ function createSVG(article) {
 
 </svg>
 `;
+}
+
+async function createFallbackImage(article, imageFile) {
+  const svg = createSVG(article);
+
+  await sharp(Buffer.from(svg))
+    .png()
+    .resize(1200, 630)
+    .jpeg({ quality: 90 })
+    .toFile(imageFile);
+}
+
+async function createFeaturedImage(
+  featuredImage,
+  imageFile
+) {
+  const response = await fetch(featuredImage);
+
+  if (!response.ok) {
+    throw new Error(
+      `Featured image request failed: ${response.status}`
+    );
+  }
+
+  const buffer = Buffer.from(
+    await response.arrayBuffer()
+  );
+
+  await sharp(buffer)
+    .resize(1200, 630, {
+      fit: "cover",
+      position: "centre"
+    })
+    .jpeg({
+      quality: 90
+    })
+    .toFile(imageFile);
 }
 
 function createHTML(article, imageUrl) {
@@ -145,6 +184,7 @@ function createHTML(article, imageUrl) {
 
   return `<!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -165,6 +205,12 @@ function createHTML(article, imageUrl) {
 
 <meta property="og:image"
       content="${imageUrl}">
+
+<meta property="og:image:secure_url"
+      content="${imageUrl}">
+
+<meta property="og:image:type"
+      content="image/jpeg">
 
 <meta property="og:image:width"
       content="1200">
@@ -203,8 +249,17 @@ body {
   padding: 40px 20px;
   text-align: center;
   color: #241b35;
-  max-width: 800px;
+  max-width: 900px;
   margin: auto;
+}
+
+.preview-image {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  border-radius: 16px;
+  margin: 20px auto;
+  display: block;
 }
 
 a {
@@ -223,6 +278,12 @@ a {
 
 <body>
 
+<img
+  class="preview-image"
+  src="${imageUrl}"
+  alt="${title}"
+>
+
 <h1>${title}</h1>
 
 <p>${description}</p>
@@ -240,10 +301,12 @@ setTimeout(function() {
 </script>
 
 </body>
+
 </html>`;
 }
 
 async function main() {
+
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error(
       "Supabase secrets are missing."
@@ -264,7 +327,7 @@ async function main() {
     const imageFile =
       path.join(
         imageDir,
-        `${slug}.png`
+        `${slug}.jpg`
       );
 
     const htmlFile =
@@ -274,15 +337,44 @@ async function main() {
       );
 
     const imageUrl =
-      `${SITE_URL}/images/articles/${slug}.png`;
+      `${SITE_URL}/images/articles/${slug}.jpg`;
 
-    const svg =
-      createSVG(article);
+    if (article.featured_image) {
 
-    await sharp(Buffer.from(svg))
-      .png()
-      .resize(1200, 630)
-      .toFile(imageFile);
+      console.log(
+        `Using featured image: ${slug}`
+      );
+
+      try {
+
+        await createFeaturedImage(
+          article.featured_image,
+          imageFile
+        );
+
+      } catch (error) {
+
+        console.log(
+          `Featured image failed. Using fallback: ${slug}`
+        );
+
+        await createFallbackImage(
+          article,
+          imageFile
+        );
+      }
+
+    } else {
+
+      console.log(
+        `No featured image. Creating automatic preview: ${slug}`
+      );
+
+      await createFallbackImage(
+        article,
+        imageFile
+      );
+    }
 
     fs.writeFileSync(
       htmlFile,
