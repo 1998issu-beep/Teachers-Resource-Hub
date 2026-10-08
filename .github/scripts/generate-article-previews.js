@@ -130,6 +130,7 @@ function createSVG(article) {
 }
 
 function createHTML(article, imageUrl) {
+function createHTML(article, imageUrl) {
   const title = escapeHTML(article.title);
   const description = escapeHTML(
     article.excerpt ||
@@ -149,48 +150,24 @@ function createHTML(article, imageUrl) {
 
 <title>${title} | Teacher Resource Hub</title>
 
-<meta name="description"
-      content="${description}">
+<meta name="description" content="${description}">
 
-<meta property="og:type"
-      content="article">
+<meta property="og:type" content="article">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+<meta property="og:image" content="${imageUrl}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${title}">
+<meta property="og:url" content="${shareUrl}">
+<meta property="og:site_name" content="Teacher Resource Hub">
 
-<meta property="og:title"
-      content="${title}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${description}">
+<meta name="twitter:image" content="${imageUrl}">
 
-<meta property="og:description"
-      content="${description}">
-
-<meta property="og:image"
-      content="${imageUrl}">
-
-<meta property="og:url"
-      content="${shareUrl}">
-
-<meta property="og:site_name"
-      content="Teacher Resource Hub">
-
-<meta name="twitter:card"
-      content="summary_large_image">
-
-<meta name="twitter:title"
-      content="${title}">
-
-<meta name="twitter:description"
-      content="${description}">
-
-<meta name="twitter:image"
-      content="${imageUrl}">
-
-<link rel="canonical"
-      href="${shareUrl}">
-
-<meta http-equiv="refresh"
-      content="0;url=${articleUrl}">
-
-<script>
-window.location.replace(${JSON.stringify(articleUrl)});
-</script>
+<link rel="canonical" href="${shareUrl}">
 
 <style>
 body {
@@ -198,9 +175,18 @@ body {
   padding: 40px 20px;
   text-align: center;
   color: #241b35;
+  max-width: 800px;
+  margin: auto;
 }
+
 a {
-  color: #6d28d9;
+  display: inline-block;
+  margin-top: 20px;
+  padding: 14px 24px;
+  background: #6d28d9;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
 }
 </style>
 
@@ -212,16 +198,19 @@ a {
 
 <p>${description}</p>
 
-<p>
 <a href="${articleUrl}">
 Read the full article
 </a>
-</p>
+
+<script>
+setTimeout(function() {
+  window.location.href = ${JSON.stringify(articleUrl)};
+}, 1500);
+</script>
 
 </body>
 </html>`;
 }
-
 async function main() {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     throw new Error(
